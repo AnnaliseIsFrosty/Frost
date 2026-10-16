@@ -1,4 +1,4 @@
-#line 1 "C:\\Frost\\Frost\\out\\build\\x64-Debug\\_deps\\sdl3-src\\src\\core\\windows\\version.rc"
+#line 1 "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\out\\build\\x64-Debug\\_deps\\sdl3-src\\src\\core\\windows\\version.rc"
 
 #line 1 "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\um\\winresrc.h"
 
@@ -8771,7 +8771,7 @@
 #line 42 "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\um\\winresrc.h"
 
 #line 44 "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.26100.0\\um\\winresrc.h"
-#line 3 "C:\\Frost\\Frost\\out\\build\\x64-Debug\\_deps\\sdl3-src\\src\\core\\windows\\version.rc"
+#line 3 "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\out\\build\\x64-Debug\\_deps\\sdl3-src\\src\\core\\windows\\version.rc"
 
 LANGUAGE 0x09, 0x01
 
