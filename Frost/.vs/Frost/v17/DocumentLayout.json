@@ -1,38 +1,38 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\",
+  "WorkspaceRootPath": "C:\\Frost\\Frost\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\CMakeSettings.json||{10608CD5-279C-4A28-BD5F-BA2CFCE06219}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\CMakeSettings.json||{10608CD5-279C-4A28-BD5F-BA2CFCE06219}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeSettings.json||{10608CD5-279C-4A28-BD5F-BA2CFCE06219}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Sandbox\\src\\Sandbox.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\Sandbox\\src\\Sandbox.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Sandbox\\src\\Sandbox.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Application.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\Frost\\headers\\Application.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frost\\headers\\Application.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\src\\Test.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\Frost\\src\\Test.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frost\\src\\Test.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Test.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\Frost\\headers\\Test.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frost\\headers\\Test.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Frost.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\Frost\\headers\\Frost.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frost\\headers\\Frost.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Frost\\Frost\\Frost\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frost\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\alexs\\Downloads\\Frost\\Frost\\CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,15 +42,15 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "CMakeSettings.json",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\CMakeSettings.json",
+              "DocumentMoniker": "C:\\Frost\\Frost\\CMakeSettings.json",
               "RelativeDocumentMoniker": "CMakeSettings.json",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\CMakeSettings.json",
+              "ToolTip": "C:\\Frost\\Frost\\CMakeSettings.json",
               "RelativeToolTip": "CMakeSettings.json",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-10-16T03:50:04.355Z",
@@ -58,11 +58,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Test.cpp",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\src\\Test.cpp",
+              "DocumentMoniker": "C:\\Frost\\Frost\\Frost\\src\\Test.cpp",
               "RelativeDocumentMoniker": "Frost\\src\\Test.cpp",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\src\\Test.cpp",
+              "ToolTip": "C:\\Frost\\Frost\\Frost\\src\\Test.cpp",
               "RelativeToolTip": "Frost\\src\\Test.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
@@ -70,11 +70,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Test.h",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Test.h",
+              "DocumentMoniker": "C:\\Frost\\Frost\\Frost\\headers\\Test.h",
               "RelativeDocumentMoniker": "Frost\\headers\\Test.h",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Test.h",
+              "ToolTip": "C:\\Frost\\Frost\\Frost\\headers\\Test.h",
               "RelativeToolTip": "Frost\\headers\\Test.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -82,11 +82,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Sandbox.cpp",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Sandbox\\src\\Sandbox.cpp",
+              "DocumentMoniker": "C:\\Frost\\Frost\\Sandbox\\src\\Sandbox.cpp",
               "RelativeDocumentMoniker": "Sandbox\\src\\Sandbox.cpp",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Sandbox\\src\\Sandbox.cpp",
+              "ToolTip": "C:\\Frost\\Frost\\Sandbox\\src\\Sandbox.cpp",
               "RelativeToolTip": "Sandbox\\src\\Sandbox.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
@@ -94,11 +94,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Application.cpp",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\src\\Application.cpp",
+              "DocumentMoniker": "C:\\Frost\\Frost\\Frost\\src\\Application.cpp",
               "RelativeDocumentMoniker": "Frost\\src\\Application.cpp",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\src\\Application.cpp",
+              "ToolTip": "C:\\Frost\\Frost\\Frost\\src\\Application.cpp",
               "RelativeToolTip": "Frost\\src\\Application.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
@@ -106,11 +106,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Application.h",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Application.h",
+              "DocumentMoniker": "C:\\Frost\\Frost\\Frost\\headers\\Application.h",
               "RelativeDocumentMoniker": "Frost\\headers\\Application.h",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Application.h",
+              "ToolTip": "C:\\Frost\\Frost\\Frost\\headers\\Application.h",
               "RelativeToolTip": "Frost\\headers\\Application.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -118,11 +118,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Frost.h",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Frost.h",
+              "DocumentMoniker": "C:\\Frost\\Frost\\Frost\\headers\\Frost.h",
               "RelativeDocumentMoniker": "Frost\\headers\\Frost.h",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\Frost\\headers\\Frost.h",
+              "ToolTip": "C:\\Frost\\Frost\\Frost\\headers\\Frost.h",
               "RelativeToolTip": "Frost\\headers\\Frost.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -130,15 +130,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 0,
               "Title": "CMakeLists.txt",
-              "DocumentMoniker": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\CMakeLists.txt",
+              "DocumentMoniker": "C:\\Frost\\Frost\\CMakeLists.txt",
               "RelativeDocumentMoniker": "CMakeLists.txt",
-              "ToolTip": "C:\\Users\\alexs\\Downloads\\Frost\\Frost\\CMakeLists.txt",
+              "ToolTip": "C:\\Frost\\Frost\\CMakeLists.txt",
               "RelativeToolTip": "CMakeLists.txt",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAYwCkAAAAHAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2026-10-16T03:37:32.092Z"
+              "WhenOpened": "2026-10-16T03:37:32.092Z",
+              "EditorCaption": ""
             }
           ]
         }
