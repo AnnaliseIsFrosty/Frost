@@ -1,0 +1,9 @@
+C:/Frost/Frost/out/build/x64-Debug/CMakeFiles/Frost.dir
+C:/Frost/Frost/out/build/x64-Debug/CMakeFiles/Sandbox.dir
+C:/Frost/Frost/out/build/x64-Debug/CMakeFiles/StageRuntime.dir
+C:/Frost/Frost/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Frost/Frost/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+C:/Frost/Frost/out/build/x64-Debug/_deps/sdl3-build/CMakeFiles/SDL3-shared.dir
+C:/Frost/Frost/out/build/x64-Debug/_deps/sdl3-build/CMakeFiles/SDL_uclibc.dir
+C:/Frost/Frost/out/build/x64-Debug/_deps/sdl3-build/CMakeFiles/edit_cache.dir
+C:/Frost/Frost/out/build/x64-Debug/_deps/sdl3-build/CMakeFiles/rebuild_cache.dir

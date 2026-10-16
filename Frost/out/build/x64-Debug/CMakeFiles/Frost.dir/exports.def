@@ -1,0 +1,11 @@
+EXPORTS 
+	??_R0?AVApplication@Frost@@@8 	 DATA
+	?_OptionsStorage@?1??__local_stdio_printf_options@@9@4_KA 	 DATA
+	??0Application@Frost@@QEAA@XZ
+	??1Application@Frost@@UEAA@XZ
+	??_7Application@Frost@@6B@
+	?FrostPrint@Frost@@YAXXZ
+	?Run@Application@Frost@@QEAAXXZ
+	__local_stdio_printf_options
+	_vfprintf_l
+	printf
