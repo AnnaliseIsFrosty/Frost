@@ -11,4 +11,7 @@ namespace Frost {
 	private:
 
 	};
+
+	// To be defined in client
+	Application* CreateApplication();
 }

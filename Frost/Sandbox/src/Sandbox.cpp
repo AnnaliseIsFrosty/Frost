@@ -1,10 +1,18 @@
 #include <Frost.h>
-#include <iostream>
 
-int main() {
-	
-	std::cout << "Hello Sandbox!" << std::endl;
-	Frost::FrostPrint();
+class Sandbox : public Frost::Application
+{
+public : 
+	Sandbox()
+	{
 
-	return 0;
+	}
+	~Sandbox()
+	{
+
+	}
+};
+
+Frost::Application* Frost::CreateApplication() {
+	return new Sandbox();
 }

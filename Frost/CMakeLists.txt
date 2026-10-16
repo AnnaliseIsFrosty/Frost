@@ -24,7 +24,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL3)
 
-add_library(Frost SHARED Frost/src/Application.cpp Frost/src/Test.cpp)
+add_library(Frost SHARED Frost/src/Application.cpp )
 add_executable(Sandbox Sandbox/src/Sandbox.cpp)
 target_include_directories(Frost PUBLIC Frost/headers)
 
