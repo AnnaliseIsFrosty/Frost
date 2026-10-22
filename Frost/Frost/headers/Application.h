@@ -1,4 +1,5 @@
 #pragma once
+#include "FrostIncludes.h"
 
 namespace Frost {
 	class Application {

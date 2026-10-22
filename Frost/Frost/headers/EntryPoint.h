@@ -1,6 +1,7 @@
 #pragma once
+#include "FrostIncludes.h"
 #include "Application.h"
-#include <stdio.h>
+
 
 extern Frost::Application* Frost::CreateApplication();
 
