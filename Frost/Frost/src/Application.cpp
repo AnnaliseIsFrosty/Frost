@@ -1,4 +1,6 @@
 #include "Application.h"
+#include <SDL3/SDL.h>
+
 
 namespace Frost {
 

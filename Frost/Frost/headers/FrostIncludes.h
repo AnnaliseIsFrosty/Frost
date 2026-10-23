@@ -5,3 +5,5 @@
 #include <stdio.h>
 #include <string>
 #include <functional>
+#include <cstdint>
+#include <memory>
