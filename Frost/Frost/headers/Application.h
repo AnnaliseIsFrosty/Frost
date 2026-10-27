@@ -1,6 +1,8 @@
 #pragma once
 #include "FrostIncludes.h"
 #include "Window.h"
+#include "Events/Event.h"
+#include "Events/ApplicationEvent.h"
 
 namespace Frost {
 	class Application {
@@ -10,7 +12,9 @@ namespace Frost {
 
 		void Run();
 
+		void OnEvent(Event& event);
 	private:
+		bool OnWindowClose(WindowCloseEvent& e);
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 	};

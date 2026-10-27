@@ -1,4 +1,5 @@
 #pragma once
+#include "FrostIncludes.h"
 #include "Window.h"
 
 namespace Frost {
@@ -34,7 +35,7 @@ namespace Frost {
 			EventCallbackFn EventCallback;
 		};
 
-		WindowData m_Data;
+		WindowData m_Data; 
 	};
 
 }
