@@ -1,7 +1,12 @@
 #include "FrostCore.h"
 #include <SDL3/SDL.h>
+#include "Application.h"
 
 namespace Frost {
+
+	namespace {
+		constexpr double fixedStepTime = 1.0 / 60.0;
+	}
 
 	struct FrostCore::Impl
 	{
@@ -53,8 +58,52 @@ namespace Frost {
 			return false;
 		}
 
-		impl_
-
+		impl_->sdlInitialised = true;
+		impl_->window.reset(SDL_CreateWindow(title, width, height, 0));
+		
+		if (!impl_->window)
+		{
+			impl_->Shutdown();
+			return false;
+		}
+		
+		//impl_->renderer.reset(SDL_CreateRenderer(impl_->window.get(), nullptr));
+		//
+		//if (!impl_->renderer)
+		//{
+		//	impl_->Shutdown();
+		//	return false;
+		//}
+		
+		return true;
 	}
 
+
+	int FrostCore::Run(Application& application)
+	{
+		impl_->quit = false;
+		using Clock = std::chrono::steady_clock;
+		auto previousTime = Clock::now();
+		double accumulator = 0.0;
+		int result = 0;
+
+		while (!impl_->quit)
+		{
+			impl_->PollEvents();
+			if (impl_->quit) break;
+
+			const auto now = Clock::now();
+			const double elasped = std::chrono::duration<double>(now - previousTime).count();
+			previousTime = now;
+
+			accumulator += elapsed;
+			while (accumulator >= fixedStepTime && !impl_->quit)
+			{
+				application
+			}
+		}
+	}
+
+
+	void FrostCore::Quit() noexcept { impl_->quit = true; }
 }

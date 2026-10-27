@@ -1,5 +1,7 @@
 #pragma once
 
+// All of the includes for the client application
+
 #include "Application.h"
 #include "EntryPoint.h"
 #include "Events/Event.h"
