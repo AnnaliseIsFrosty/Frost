@@ -17,6 +17,8 @@ namespace Frost {
 	void Application::Run() {
 		while (m_Running)
 		{
+			std::cout << "Mouse X : " << Input::GetMouseX() << " ; Mouse Y : " << Input::GetMouseY() << std::endl;
+
 			m_Window->OnUpdate();
 		}
 	}

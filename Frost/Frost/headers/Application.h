@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
+#include "Input.h"
 
 namespace Frost {
 	class Application {

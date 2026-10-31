@@ -37,6 +37,8 @@ namespace Frost {
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
+		inline virtual const void* GetWindow() = 0;
+
 		// Create function has to be implemented per platform
 		static Window* Create(const WindowProps& props = WindowProps());
 	};

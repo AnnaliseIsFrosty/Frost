@@ -184,4 +184,8 @@ namespace Frost {
 		return m_Data.VSync;
 	}
 
+	inline const void* WindowsWindow::GetWindow()
+	{
+		return impl_->window.get();
+	}
 }
