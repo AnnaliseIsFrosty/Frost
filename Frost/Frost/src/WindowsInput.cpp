@@ -6,10 +6,10 @@ namespace Frost
 {
 	Input* Input::s_Instance = new WindowsInput();
 
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	bool WindowsInput::IsKeyPressedImpl(FrostKeycode keycode)
 	{
 		const bool* keyboardState = SDL_GetKeyboardState(NULL);
-		if (keyboardState[SDL_GetScancodeFromKey(keycode, NULL)])
+		if (keyboardState[SDL_GetScancodeFromKey((int)keycode, NULL)])
 		{
 			std::cout << "Key pressed!" << std::endl;
 			return true;
@@ -19,7 +19,7 @@ namespace Frost
 		}
 	}
 
-	bool WindowsInput::IsMouseButtonPressedImpl(MouseButtonFlags button)
+	bool WindowsInput::IsMouseButtonPressedImpl(FrostMouseButton button)
 	{
 		//float x;
 		//float y;
