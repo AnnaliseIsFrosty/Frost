@@ -28,6 +28,7 @@ add_library(Frost SHARED Frost/src/Application.cpp  Frost/src/WindowsWindow.cpp 
 add_executable(Sandbox Sandbox/src/Sandbox.cpp)
 target_include_directories(Frost PUBLIC Frost/headers)
 
+target_link_libraries(Frost PRIVATE "d3d12.lib" "dxgi.lib" "d3dcompiler.lib")
 target_link_libraries(Frost PRIVATE SDL3::SDL3)
 target_link_libraries(Sandbox PUBLIC Frost)
 

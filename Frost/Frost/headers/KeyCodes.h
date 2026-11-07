@@ -1,5 +1,5 @@
 #pragma once
-#include "FrostIncludes.h"
+//#include "FrostIncludes.h"
 
 namespace Frost {
 
@@ -88,7 +88,7 @@ namespace Frost {
 		PIPE                  = 0x0000007cu, /**< '|' */
 		RIGHTBRACE            = 0x0000007du, /**< '}' */
 		TILDE                 = 0x0000007eu, /**< '~' */
-		DELETE                = 0x0000007fu, /**< '\x7F' */
+		DEL                   = 0x0000007fu, /**< '\x7F' */
 		PLUSMINUS             = 0x000000b1u, /**< '\xB1' */
 		CAPSLOCK              = 0x40000039u, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_CAPSLOCK) */
 		F1                    = 0x4000003au, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_F1) */
@@ -170,7 +170,7 @@ namespace Frost {
 		PRIOR                 = 0x4000009du, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_PRIOR) */
 		RETURN2               = 0x4000009eu, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_RETURN2) */
 		SEPARATOR             = 0x4000009fu, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_SEPARATOR) */
-		OUT                   = 0x400000a0u, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_OUT) */
+		//OUT                   = 0x400000a0u, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_OUT) */
 		OPER                  = 0x400000a1u, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_OPER) */
 		CLEARAGAIN            = 0x400000a2u, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_CLEARAGAIN) */
 		CRSEL                 = 0x400000a3u, /**< FROST_SCANCODE_TO_KEYCODE(FROST_SCANCODE_CRSEL) */
