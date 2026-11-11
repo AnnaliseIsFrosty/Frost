@@ -105,16 +105,119 @@ namespace Frost {
 		depthStencilDesc.Height = mClientHeight;
 		depthStencilDesc.DepthOrArraySize = 1;
 		depthStencilDesc.MipLevels = 1;
-		//depthStencilDesc.Format = mDepthStencilFormat;
+		depthStencilDesc.Format = mDepthStencilFormat;
 		depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
 		depthStencilDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
 		depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+		D3D12_CLEAR_VALUE optClear;
+		optClear.Format = mDepthStencilFormat;
+		optClear.DepthStencil.Depth = 1.f;
+		optClear.DepthStencil.Stencil = 0;
+		md3dDevice->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&depthStencilDesc,
+			D3D12_RESOURCE_STATE_COMMON,
+			&optClear,
+			IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())
+		);
+		assert(mDepthStencilBuffer.Get());
+
+		// Create Descriptor to mip level 0 of entire resource using the format of the resource
+		md3dDevice->CreateDepthStencilView(
+			mDepthStencilBuffer.Get(),
+			nullptr,
+			DepthStencilView()
+		);
+
+		// Transition the resource from its initial state to be used as a depth buffer
+		mCommandList->ResourceBarrier(
+			1,
+			&CD3DX12_RESOURCE_BARRIER::Transition(
+				mDepthStencilBuffer.Get(),
+				D3D12_RESOURCE_STATE_COMMON,
+				D3D12_RESOURCE_STATE_DEPTH_WRITE)
+		);
+
+		// Create and set viewport
+		D3D12_VIEWPORT vp;
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = 0.0f;
+		vp.Width = static_cast<float>(mClientWidth);
+		vp.Height = static_cast<float>(mClientHeight);
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+
+		mCommandList->RSSetViewports(1, &vp);
+		// The viewport needs to be reset whenever the command list is reset
+
+		// Set Scissor rectangle
+		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
+		mCommandList->RSSetScissorRects(1, &mScissorRect);
 	}
 
 	void DX12Renderer::Render()
 	{
 
+	}
+
+	void DX12Renderer::OnResize()
+	{
+		std::cout << "--- RENDERER ---  : Window Resized" << std::endl;
+		
+		// Flush before changing any resources
+		FlushCommandQueue();
+
+		mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr);
+
+		// Release the previous resources we will be recreating
+		for (int i = 0; i < SwapChainBufferCount; i++)
+		{
+			mSwapChainBuffer[i].Reset();
+		}
+		mDepthStencilBuffer.Reset();
+
+		// Resize the swap chain
+		mSwapChain->ResizeBuffers(
+			SwapChainBufferCount,
+			mClientWidth,
+			mClientHeight,
+			mBackBufferFormat,
+			DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+
+		mCurrBackBuffer = 0;
+
+		// Create an RTV for each buffer in swap chain
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
+		for (UINT i = 0; i < SwapChainBufferCount; i++)
+		{
+			// Get the ith buffer in the swap chain
+			mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffer[i]));
+
+			// Create an RTV to it
+			md3dDevice->CreateRenderTargetView(mSwapChainBuffer[i].Get(), nullptr, rtvHeapHandle);
+
+			// Next entry in heap
+			rtvHeapHandle.Offset(1, mRtvDescriptorSize);
+		}
+
+		// Create the depth/stencil buffer and view
+		D3D12_RESOURCE_DESC depthStencilDesc;
+		depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		depthStencilDesc.Alignment = 0;
+		depthStencilDesc.Width = mClientWidth;
+		depthStencilDesc.Height = mClientHeight;
+		depthStencilDesc.DepthOrArraySize = 1;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.Format = mDepthStencilFormat;
+		depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+		depthStencilDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+		depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+		
+		std::cout << "--- RENDERER ---  : Finished Resizing Window" << std::endl;
 	}
 
 	void DX12Renderer::CreateCommandObjects()
@@ -203,6 +306,30 @@ namespace Frost {
 	D3D12_CPU_DESCRIPTOR_HANDLE DX12Renderer::DepthStencilView() const
 	{
 		return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
+	}
+
+	void DX12Renderer::FlushCommandQueue()
+	{
+		std::cout << "--- RENDERER ---  : Command Queue Flushed" << std::endl;
+
+		mCurrentFence++;
+
+		// Add instruction to command queue to set a new fence point
+		// New fence point won't be set until GPU finishes processing all commands prior to this Signal()
+		mCommandQueue->Signal(mFence.Get(), mCurrentFence);
+
+		// Wait until GPU has completed commands up to this fence point
+		if (mFence->GetCompletedValue() < mCurrentFence)
+		{
+			HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+
+			// Fire event when GPU hits current fence
+			mFence->SetEventOnCompletion(mCurrentFence, eventHandle);
+
+			// Wait until the GPU hits current fence event is fired
+			WaitForSingleObject(eventHandle, INFINITE);
+			CloseHandle(eventHandle);
+		}
 	}
 
 }

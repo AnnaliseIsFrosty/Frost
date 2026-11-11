@@ -16,3 +16,4 @@
 #include <d3dcommon.h>
 #include <wrl/client.h> // ComPtr smart pointers
 #include <cassert>
+#include <Windows.h>

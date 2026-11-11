@@ -40,11 +40,19 @@ namespace Frost {
 		//std::cout << "Frosty Event Called! Hee-Ho!" << std::endl;
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& ev) { return OnWindowClose(ev); });
+		dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& ev) { return OnWindowResize(ev); });
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
+		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		std::cout << "RESIZED WINDOW HEE HO!" << std::endl;
+		m_Renderer->OnResize();
 		return true;
 	}
 }

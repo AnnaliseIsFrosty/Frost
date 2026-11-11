@@ -11,9 +11,11 @@ namespace Frost
 		DX12Renderer(void* hwnd);
 		void Init() override;
 		void Render() override;
+		void OnResize() override;
 		void CreateCommandObjects();
 		void CreateSwapChain();
 		void CreateRtvAndDsvDescriptorHeaps();
+		void FlushCommandQueue();
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
 
@@ -25,7 +27,9 @@ namespace Frost
 
 		Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
 		Microsoft::WRL::ComPtr<ID3D12Device> md3dDevice;
+		
 		Microsoft::WRL::ComPtr<ID3D12Fence> mFence;
+		UINT64 mCurrentFence = 0;
 
 		UINT mRtvDescriptorSize = 0;									// Render Target resources
 		UINT mDsvDescriptorSize = 0;									// Depth/Stencil resources
@@ -50,6 +54,10 @@ namespace Frost
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;			// Depth/Stencil heap
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
+		DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencilBuffer;
+
+		D3D12_RECT mScissorRect;
 	};
 
 }
