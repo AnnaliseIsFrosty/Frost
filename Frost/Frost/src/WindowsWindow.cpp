@@ -183,10 +183,10 @@ namespace Frost {
 		return m_Data.VSync;
 	}
 
-	inline const void* WindowsWindow::GetWindow()
+	inline void* WindowsWindow::GetWindow()
 	{
 		SDL_PropertiesID props = SDL_GetWindowProperties(impl_->window.get());
-		HWND hwnd = (HWND)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+		void* hwnd = SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
 		if (!hwnd)
 		{
 			std::cout << "Failed to get HWND" << std::endl;

@@ -11,7 +11,7 @@ namespace Frost
 
 		virtual ~Renderer() {};
 
-		static Renderer* Create(const void* windowHandle);
+		static Renderer* Create(void* windowHandle);
 
 
 	protected:

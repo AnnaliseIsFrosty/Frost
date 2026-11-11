@@ -8,7 +8,7 @@ namespace Frost
 	class DX12Renderer : public Renderer
 	{
 	public:
-		DX12Renderer(const void* hwnd);
+		DX12Renderer(void* hwnd);
 		void Init() override;
 		void Render() override;
 		void CreateCommandObjects();
@@ -49,6 +49,7 @@ namespace Frost
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;			// Render Target heap
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;			// Depth/Stencil heap
 
+		Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
 	};
 
 }

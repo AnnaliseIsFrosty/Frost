@@ -6,15 +6,15 @@
 namespace Frost {
 	
 	
-	Renderer* Renderer::Create(const void* hwnd)
+	Renderer* Renderer::Create(void* hwnd)
 	{
 		return new DX12Renderer(hwnd);
 	}
 
-	DX12Renderer::DX12Renderer(const void* hwnd)
+	DX12Renderer::DX12Renderer(void* hwnd)
 	{
-		Init();
 		mhMainWnd = (HWND)hwnd;
+		Init();
 	}
 
 	void DX12Renderer::Init()
@@ -81,7 +81,21 @@ namespace Frost {
 
 		// Create Descriptor Heaps
 		CreateRtvAndDsvDescriptorHeaps();
-		CurrentBackBufferView();
+
+
+		// Create an RTV for each buffer in swap chain
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
+		for (UINT i = 0; i < SwapChainBufferCount; i++)
+		{
+			// Get the ith buffer in the swap chain
+			mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffer[i]));
+
+			// Create an RTV to it
+			md3dDevice->CreateRenderTargetView(mSwapChainBuffer[i].Get(), nullptr, rtvHeapHandle);
+
+			// Next entry in heap
+			rtvHeapHandle.Offset(1, mRtvDescriptorSize);
+		}
 	}
 
 	void DX12Renderer::Render()
