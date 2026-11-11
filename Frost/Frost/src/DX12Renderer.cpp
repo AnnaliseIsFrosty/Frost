@@ -96,6 +96,20 @@ namespace Frost {
 			// Next entry in heap
 			rtvHeapHandle.Offset(1, mRtvDescriptorSize);
 		}
+
+		// Create the depth/stencil buffer and view
+		D3D12_RESOURCE_DESC depthStencilDesc;
+		depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		depthStencilDesc.Alignment = 0;
+		depthStencilDesc.Width = mClientWidth;
+		depthStencilDesc.Height = mClientHeight;
+		depthStencilDesc.DepthOrArraySize = 1;
+		depthStencilDesc.MipLevels = 1;
+		//depthStencilDesc.Format = mDepthStencilFormat;
+		depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+		depthStencilDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+		depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 	}
 
 	void DX12Renderer::Render()
@@ -111,10 +125,13 @@ namespace Frost {
 		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		md3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&mCommandQueue));
+		assert(mCommandQueue.Get());
 		md3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(mDirectCmdListAlloc.GetAddressOf()));
+		assert(mDirectCmdListAlloc.Get());
 		md3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 										mDirectCmdListAlloc.Get(),	// Associated command allocator
 										nullptr, IID_PPV_ARGS(mCommandList.GetAddressOf()));
+		assert(mCommandList.Get());
 
 		// Start off closed because the first time we refer to the 
 		// command list we Reset() which requires it being closed first
