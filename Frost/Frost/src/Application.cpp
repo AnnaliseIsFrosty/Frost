@@ -7,6 +7,9 @@ namespace Frost {
 	Application::Application() {
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback([this](Event& e) {OnEvent(e); });
+		
+
+		m_Renderer = std::unique_ptr<Renderer>(Renderer::Create(m_Window->GetWindow()));
 
 	}
 

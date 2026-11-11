@@ -62,7 +62,6 @@ namespace Frost {
 
 		// DO SDL WINDOW CREATION HERE
 		// ---------------------------
-
 		impl_->window.reset(SDL_CreateWindow(m_Data.Title, m_Data.Width, m_Data.Height, SDL_WINDOW_RESIZABLE));
 		if (!impl_->window)
 		{
@@ -186,6 +185,17 @@ namespace Frost {
 
 	inline const void* WindowsWindow::GetWindow()
 	{
-		return impl_->window.get();
+		SDL_PropertiesID props = SDL_GetWindowProperties(impl_->window.get());
+		HWND hwnd = (HWND)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+		if (!hwnd)
+		{
+			std::cout << "Failed to get HWND" << std::endl;
+		}
+		else
+		{
+			std::cout << "Got HWND" << std::endl;
+			return hwnd;
+		}
+		//return impl_->window.get();
 	}
 }

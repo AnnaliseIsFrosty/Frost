@@ -24,12 +24,30 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL3)
 
+# SDL3
+# We want to build SDL3 as a shared library (DLL), and we don't need the static library, tests, or examples.
+set(DX12_SHARED ON CACHE BOOL "Build shared SDL3" FORCE)
+set(DX12_STATIC OFF CACHE BOOL "Do not build static SDL3" FORCE)
+set(DX12_TEST_LIBRARY OFF CACHE BOOL "Do not build SDL3 test support" FORCE)
+set(DX12_TESTS OFF CACHE BOOL "Do not build SDL3 tests" FORCE)
+set(DX12_EXAMPLES OFF CACHE BOOL "Do not build SDL3 examples" FORCE)
+
+FetchContent_Declare(
+	DirectX-Headers
+	GIT_REPOSITORY https://github.com/microsoft/DirectX-Headers.git
+	GIT_TAG v1.620.2
+)
+
+FetchContent_MakeAvailable(DirectX-Headers)
+
+
 add_library(Frost SHARED Frost/src/Application.cpp  Frost/src/WindowsWindow.cpp "Frost/src/WindowsInput.cpp" "Frost/src/DX12Renderer.cpp")
 add_executable(Sandbox Sandbox/src/Sandbox.cpp)
 target_include_directories(Frost PUBLIC Frost/headers)
 
-target_link_libraries(Frost PRIVATE "d3d12.lib" "dxgi.lib" "d3dcompiler.lib")
 target_link_libraries(Frost PRIVATE SDL3::SDL3)
+target_link_libraries(Frost PRIVATE DirectX-Headers)
+target_link_libraries(Frost PRIVATE "d3d12.lib" "dxgi.lib" "d3dcompiler.lib")
 target_link_libraries(Sandbox PUBLIC Frost)
 
 set_target_properties(Frost PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -38,6 +56,9 @@ if(WIN32)
 	add_custom_target(StageRuntime
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different
 			$<TARGET_FILE:SDL3::SDL3> $<TARGET_FILE_DIR:Sandbox>
+		VERBATIM
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			$<TARGET_FILE:DirectX-Headers> $<TARGET_FILE_DIR:Sandbox>
 		VERBATIM)
 	add_dependencies(Sandbox StageRuntime)
 endif()

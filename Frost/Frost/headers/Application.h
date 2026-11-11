@@ -4,6 +4,7 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "Input.h"
+#include "Renderer.h"
 
 namespace Frost {
 	class Application {
@@ -17,6 +18,7 @@ namespace Frost {
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		std::unique_ptr<Window> m_Window;
+		std::unique_ptr<Renderer> m_Renderer;
 		bool m_Running = true;
 	};
 
