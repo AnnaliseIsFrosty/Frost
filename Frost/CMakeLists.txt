@@ -35,7 +35,7 @@ set(DX12_EXAMPLES OFF CACHE BOOL "Do not build SDL3 examples" FORCE)
 FetchContent_Declare(
 	DirectX-Headers
 	GIT_REPOSITORY https://github.com/microsoft/DirectX-Headers.git
-	GIT_TAG v1.620.2
+	GIT_TAG v1.616.0
 )
 
 FetchContent_MakeAvailable(DirectX-Headers)

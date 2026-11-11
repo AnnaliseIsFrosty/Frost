@@ -1,5 +1,5 @@
 #include "DX12Renderer.h"
-//#include "../include/directx/d3dx12.h"
+#include "../include/directx/d3dx12.h"
 
 
 
@@ -81,7 +81,7 @@ namespace Frost {
 
 		// Create Descriptor Heaps
 		CreateRtvAndDsvDescriptorHeaps();
-
+		CurrentBackBufferView();
 	}
 
 	void DX12Renderer::Render()
@@ -162,11 +162,11 @@ namespace Frost {
 
 	D3D12_CPU_DESCRIPTOR_HANDLE DX12Renderer::CurrentBackBufferView() const
 	{
-		//return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-		//	mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
-		//	mCurrBackBuffer,
-		//	mRtvDescriptorSize);
-		return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
+		std::cout << "--- RENDERER ---  : Getting back buffer view" << std::endl;
+		return CD3DX12_CPU_DESCRIPTOR_HANDLE(
+			mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
+			mCurrBackBuffer,
+			mRtvDescriptorSize);
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE DX12Renderer::DepthStencilView() const
