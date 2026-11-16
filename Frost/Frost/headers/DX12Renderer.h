@@ -56,7 +56,8 @@ namespace Frost
 		Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
 		DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		Microsoft::WRL::ComPtr<ID3D12Resource> mDepthStencilBuffer;
-
+		
+		D3D12_VIEWPORT mScreenViewport;
 		D3D12_RECT mScissorRect;
 	};
 

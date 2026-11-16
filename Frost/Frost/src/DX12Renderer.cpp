@@ -217,6 +217,49 @@ namespace Frost {
 		depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 		
+		D3D12_CLEAR_VALUE optClear;
+		optClear.Format = mDepthStencilFormat;
+		optClear.DepthStencil.Depth = 1.0f;
+		optClear.DepthStencil.Stencil = 0;
+
+		md3dDevice->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&depthStencilDesc,
+			D3D12_RESOURCE_STATE_COMMON,
+			&optClear,
+			IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf()));
+
+		// Create descriptor to mip level 0 of entire resource using the format of the resource.
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+		dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Format = mDepthStencilFormat;
+		dsvDesc.Texture2D.MipSlice = 0;
+		md3dDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), &dsvDesc, DepthStencilView());
+
+		// Transition the resource from its initial state to be used as a depth buffer.
+		mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer.Get(),
+			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+
+		// Execute the resize commands.
+		mCommandList->Close();
+		ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+		mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		// Wait until resize is complete.
+		FlushCommandQueue();
+
+		// Update the viewport transform to cover the client area.
+		mScreenViewport.TopLeftX = 0;
+		mScreenViewport.TopLeftY = 0;
+		mScreenViewport.Width = static_cast<float>(mClientWidth);
+		mScreenViewport.Height = static_cast<float>(mClientHeight);
+		mScreenViewport.MinDepth = 0.0f;
+		mScreenViewport.MaxDepth = 1.0f;
+
+		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
+
 		std::cout << "--- RENDERER ---  : Finished Resizing Window" << std::endl;
 	}
 
