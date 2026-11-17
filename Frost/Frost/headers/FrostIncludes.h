@@ -14,6 +14,8 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <d3dcommon.h>
+#include <format> // C++20 header
+#include <DirectXMath.h>
 #include <wrl/client.h> // ComPtr smart pointers
 #include <cassert>
 #include <Windows.h>

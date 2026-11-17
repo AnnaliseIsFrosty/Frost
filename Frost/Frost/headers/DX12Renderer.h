@@ -18,6 +18,12 @@ namespace Frost
 		void FlushCommandQueue();
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
+		Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList,
+																	const void* initData, UINT64 byteSize, 
+																	Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
+
+
+		void DrawCube();
 
 	protected:
 
