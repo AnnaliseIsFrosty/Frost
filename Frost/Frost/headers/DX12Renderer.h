@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "FrostIncludes.h"
 
+using namespace DirectX;
+
 namespace Frost
 {
 
@@ -23,7 +25,7 @@ namespace Frost
 																	Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
 
 
-		void DrawCube();
+		void DrawStaticCube();
 
 	protected:
 
@@ -65,6 +67,12 @@ namespace Frost
 		
 		D3D12_VIEWPORT mScreenViewport;
 		D3D12_RECT mScissorRect;
+	};
+
+	struct Vertex
+	{
+		XMFLOAT3 vPos;
+		XMFLOAT4 Colour;
 	};
 
 }

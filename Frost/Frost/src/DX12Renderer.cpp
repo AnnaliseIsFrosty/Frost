@@ -432,11 +432,83 @@ namespace Frost {
 
 
 
-	//void DX12Renderer::DrawCube()
-	//{
-	//	struct Vertex
-	//	{
-	//	};
-	//}
+	void DX12Renderer::DrawStaticCube()
+	{
+		mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		
+		// VERTICES 
+
+		Vertex vertices[] = 
+		{ 
+			{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1, 1, 1, 1) },
+			{ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(0, 0, 0, 1) },
+			{ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(1, 0, 0, 1) },
+			{ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(0, 1, 0, 1) },
+			{ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(0, 0, 1, 1) },
+			{ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(1, 1, 0, 1) },
+			{ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(0, 1, 1, 1) },
+			{ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(1, 0, 1, 1) } 
+		};
+
+		const UINT vertexCount = 8;
+		const UINT vbByteSize = vertexCount * sizeof(Vertex);
+		UINT startVertexLocation = 0; // Location in the global vertex buffer that this cube's vertices start
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferGPU = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferUploader = nullptr;
+		VertexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), vertices, vbByteSize, VertexBufferUploader);
+
+		D3D12_VERTEX_BUFFER_VIEW vbv;
+		vbv.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
+		vbv.StrideInBytes = sizeof(Vertex);
+		vbv.SizeInBytes = vbByteSize;
+
+		D3D12_VERTEX_BUFFER_VIEW vertexBuffers[1] = { vbv };
+		mCommandList->IASetVertexBuffers(0, 1, vertexBuffers);
+	
+		mCommandList->DrawInstanced(vertexCount, 1, startVertexLocation, 0);
+
+		// INDICES 
+	
+		std::uint16_t indices[] = 
+		{   
+			// front face   
+			0, 1, 2,   
+			0, 2, 3,     
+			// back face   
+			4, 6, 5,   
+			4, 7, 6,     
+			// left face   
+			4, 5, 1,   
+			4, 1, 0,     
+			// right face   
+			3, 2, 6,   
+			3, 6, 7,     
+			// top face
+			1, 5, 6,   
+			1, 6, 2,     
+			// bottom face   
+			4, 0, 3,   
+			4, 3, 7 
+		};
+
+		const UINT indexCount = 36;
+		const UINT ibByteSize = indexCount * sizeof(std::uint16_t);
+		UINT startIndexLocation = 0;
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferGPU = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferUploader = nullptr;
+		IndexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), indices, ibByteSize, IndexBufferUploader);
+
+		D3D12_INDEX_BUFFER_VIEW ibv;
+		ibv.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
+		ibv.Format = DXGI_FORMAT_R16_UINT;
+		ibv.SizeInBytes = ibByteSize;
+
+		mCommandList->IASetIndexBuffer(&ibv);
+	
+		mCommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, startVertexLocation, 0);
+
+	}
 }
 
