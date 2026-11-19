@@ -432,14 +432,40 @@ namespace Frost {
 		return defaultBuffer;
 	}
 
-	UINT DX12Renderer::CalcConstantBufferByteSize(UINT byteSize)
+	void DX12Renderer::CreateRootSignature()
 	{
-		// Constant buffers must be a multiple of the minimum hardware allocation size (usually 256 bytes)
-		// So we round up to nearest multiple of 256 bytes by adding 255 then masking off the lower 2 bytes which store all bits < 256
-		
-		return (byteSize + 255) & 255;
-	}
+		// Root parameter can be a table, root descriptor or root constants
+		CD3DX12_ROOT_PARAMETER slotRootParameter[1];
 
+		// Create a single descriptor table of CBVs
+		CD3DX12_DESCRIPTOR_RANGE cbvTable;
+		cbvTable.Init(
+			D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+			1,			// Number of descriptors in the table
+			0);			// The base shader register arguments are bound to for this root parameter
+
+		slotRootParameter[0].InitAsDescriptorTable(
+			1,			// Number of ranges
+			&cbvTable); // Pointer to array of ranges
+
+		// A root signature is an array of root parameters
+		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		// Create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
+		Microsoft::WRL::ComPtr<ID3DBlob> serializedRootSig = nullptr;
+		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
+		HRESULT hr = D3D12SerializeRootSignature(
+			&rootSigDesc,
+			D3D_ROOT_SIGNATURE_VERSION_1,
+			serializedRootSig.GetAddressOf(),
+			errorBlob.GetAddressOf());
+
+		md3dDevice->CreateRootSignature(
+			0,
+			serializedRootSig->GetBufferPointer(),
+			serializedRootSig->GetBufferSize(),
+			IID_PPV_ARGS(&mRootSignature));
+	}
 
 
 	void DX12Renderer::DrawStaticCube()
@@ -530,26 +556,41 @@ namespace Frost {
 			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 		};
 
-		struct ObjectConstants
-		{
-			XMFLOAT4X4 WorldViewProj = XMFLOAT4X4(
-				1.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 1.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 1.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f);
-		};
 
-		UINT elementByteSize = CalcConstantBufferByteSize(sizeof(ObjectConstants));
+		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+		cbvHeapDesc.NumDescriptors = 1;
+		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		cbvHeapDesc.NodeMask = 0;
 
-		Microsoft::WRL::ComPtr<ID3D12Resource> mUploadCBuffer;
-		md3dDevice->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-			D3D12_HEAP_FLAG_NONE,
-			&CD3DX12_RESOURCE_DESC::Buffer(elementByteSize),
-			D3D12_RESOURCE_STATE_GENERIC_READ,
-			nullptr,
-			IID_PPV_ARGS(&mUploadCBuffer));
-		assert(mUploadCBuffer.Get());
+		md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&mCbvHeap));
+		assert(mCbvHeap.Get());
+
+
+		ObjectConstants objConstants;
+
+		// Constant buffer to store the constants of n object
+		std::unique_ptr<DX12UploadBuffer<ObjectConstants>> mObjectCB = nullptr;		   // n
+		mObjectCB = std::make_unique<DX12UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
+		//mUploadCBuffer->CopyData(0, objConstants);
+
+		UINT objectCBByteSize = DX12UploadBuffer<ObjectConstants>::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+
+		// Address to start of the buffer (0th constant buffer)
+		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
+
+		// Offset to the ith object constant buffer in the buffer
+		int boxCBufIndex = 0; // i
+		cbAddress += boxCBufIndex * objectCBByteSize;
+
+		// Describes subset of the constant buffer resource to bind to the HLSL constant buffer structure
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+		cbvDesc.BufferLocation = cbAddress;
+		cbvDesc.SizeInBytes = objectCBByteSize;
+
+		md3dDevice->CreateConstantBufferView(&cbvDesc, mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+
+
 	}
 }
 

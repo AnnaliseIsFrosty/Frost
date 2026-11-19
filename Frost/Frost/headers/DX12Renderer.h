@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer.h"
 #include "FrostIncludes.h"
+#include "DX12UploadBuffer.h"
 
 using namespace DirectX;
 
@@ -23,7 +24,7 @@ namespace Frost
 		Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList,
 																	const void* initData, UINT64 byteSize, 
 																	Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
-		UINT CalcConstantBufferByteSize(UINT byteSize);
+		void CreateRootSignature();
 
 		void DrawStaticCube();
 
@@ -51,6 +52,7 @@ namespace Frost
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue> mCommandQueue;
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> mDirectCmdListAlloc;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
 
 		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;
 		int mClientWidth, mClientHeight;
@@ -60,6 +62,7 @@ namespace Frost
 
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mRtvHeap;			// Render Target heap
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mDsvHeap;			// Depth/Stencil heap
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> mCbvHeap;			// Constant buffer heap
 
 		Microsoft::WRL::ComPtr<ID3D12Resource> mSwapChainBuffer[SwapChainBufferCount];
 		DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -74,5 +77,13 @@ namespace Frost
 		XMFLOAT3 vPos;
 		XMFLOAT4 Colour;
 	};
-
+	
+	struct ObjectConstants
+	{
+		XMFLOAT4X4 WorldViewProj = XMFLOAT4X4(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
+	};
 }
