@@ -155,6 +155,8 @@ namespace Frost {
 		// Set Scissor rectangle
 		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 		mCommandList->RSSetScissorRects(1, &mScissorRect);
+
+		DrawStaticCube();
 	}
 
 	void DX12Renderer::Render()
@@ -430,12 +432,21 @@ namespace Frost {
 		return defaultBuffer;
 	}
 
+	UINT DX12Renderer::CalcConstantBufferByteSize(UINT byteSize)
+	{
+		// Constant buffers must be a multiple of the minimum hardware allocation size (usually 256 bytes)
+		// So we round up to nearest multiple of 256 bytes by adding 255 then masking off the lower 2 bytes which store all bits < 256
+		
+		return (byteSize + 255) & 255;
+	}
+
 
 
 	void DX12Renderer::DrawStaticCube()
 	{
 		mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		
+
 		// VERTICES 
 
 		Vertex vertices[] = 
@@ -467,6 +478,7 @@ namespace Frost {
 		mCommandList->IASetVertexBuffers(0, 1, vertexBuffers);
 	
 		mCommandList->DrawInstanced(vertexCount, 1, startVertexLocation, 0);
+
 
 		// INDICES 
 	
@@ -506,9 +518,38 @@ namespace Frost {
 		ibv.SizeInBytes = ibByteSize;
 
 		mCommandList->IASetIndexBuffer(&ibv);
-	
+
 		mCommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, startVertexLocation, 0);
 
+
+		// SHADER
+
+		D3D12_INPUT_ELEMENT_DESC desc[] =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+		};
+
+		struct ObjectConstants
+		{
+			XMFLOAT4X4 WorldViewProj = XMFLOAT4X4(
+				1.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 1.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 1.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f);
+		};
+
+		UINT elementByteSize = CalcConstantBufferByteSize(sizeof(ObjectConstants));
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> mUploadCBuffer;
+		md3dDevice->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(elementByteSize),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&mUploadCBuffer));
+		assert(mUploadCBuffer.Get());
 	}
 }
 
