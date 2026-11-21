@@ -25,6 +25,7 @@ namespace Frost
 																	const void* initData, UINT64 byteSize, 
 																	Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
 		void CreateRootSignature();
+		Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(const std::wstring& filename, const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);
 
 		void DrawStaticCube();
 
@@ -70,6 +71,12 @@ namespace Frost
 		
 		D3D12_VIEWPORT mScreenViewport;
 		D3D12_RECT mScissorRect;
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
+		Microsoft::WRL::ComPtr<ID3DBlob> mvsByteCode;
+		Microsoft::WRL::ComPtr<ID3DBlob> mpsByteCode;
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	};
 
 	struct Vertex

@@ -17,7 +17,7 @@ struct OutputType
     float4 color : COLOR;
 };
 
-OutputType vs(InputType input)
+OutputType VS(InputType input)
 {
     OutputType output;
     

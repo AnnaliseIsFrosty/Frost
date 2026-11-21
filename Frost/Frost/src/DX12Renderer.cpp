@@ -1,7 +1,6 @@
 #include "DX12Renderer.h"
 #include "../include/directx/d3dx12.h"
 
-
 namespace Frost {
 	
 	
@@ -155,6 +154,14 @@ namespace Frost {
 		// Set Scissor rectangle
 		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 		mCommandList->RSSetScissorRects(1, &mScissorRect);
+
+
+		// ------------------------------------------------------------
+
+		CreateRootSignature();
+
+		mvsByteCode = CompileShader(L"../../../Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
+		mpsByteCode = CompileShader(L"../../../Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
 
 		DrawStaticCube();
 	}
@@ -459,12 +466,56 @@ namespace Frost {
 			D3D_ROOT_SIGNATURE_VERSION_1,
 			serializedRootSig.GetAddressOf(),
 			errorBlob.GetAddressOf());
+		assert(errorBlob == nullptr);
 
 		md3dDevice->CreateRootSignature(
 			0,
 			serializedRootSig->GetBufferPointer(),
 			serializedRootSig->GetBufferSize(),
 			IID_PPV_ARGS(&mRootSignature));
+		assert(mRootSignature.Get());
+
+		std::cout << "--- RENDERER ---  : Created Root Signature" << std::endl;
+
+		//// Set the root signature and CBV heap to the command list, and set the descriptor table identifying the resource we want to bind to the pipeline
+		//mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
+		//ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
+		//mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+		//// Offset the CBV we want to use for this draw call
+		//CD3DX12_GPU_DESCRIPTOR_HANDLE cbv(mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+		//cbv.Offset(cbvIndex, mCbvSrvUavDescriptorSize);
+	}
+
+	Microsoft::WRL::ComPtr<ID3DBlob> DX12Renderer::CompileShader(const std::wstring& filename, const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target)
+	{
+		UINT compileFlags = 0;
+
+//#if defined(DEBUG) || defined(_DEBUG)
+//		compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+//#endif
+
+		HRESULT hr = S_OK;
+
+		Microsoft::WRL::ComPtr<ID3DBlob> byteCode = nullptr;
+		Microsoft::WRL::ComPtr<ID3DBlob> errors;
+
+		hr = D3DCompileFromFile(filename.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, entrypoint.c_str(), target.c_str(), compileFlags, 0, &byteCode, &errors);
+
+		if (FAILED(hr))
+		{
+			std::cout << "Failed to compile shader" << std::endl;
+		}
+
+		// Output errors to debug window
+		if (errors != nullptr)
+			OutputDebugStringA((char*)errors->GetBufferPointer());
+
+		assert(byteCode);
+
+		std::cout << "--- RENDERER ---  : Finished Compiling Shader code" << std::endl;
+
+		return byteCode;
 	}
 
 
@@ -552,8 +603,8 @@ namespace Frost {
 
 		D3D12_INPUT_ELEMENT_DESC desc[] =
 		{
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"COLOR",	 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 		};
 
 
@@ -590,7 +641,29 @@ namespace Frost {
 
 		md3dDevice->CreateConstantBufferView(&cbvDesc, mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 
+		// ---- PSO ----
 
+		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+		psoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
+		psoDesc.pRootSignature = mRootSignature.Get();
+		psoDesc.VS = { reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()), mvsByteCode->GetBufferSize() };
+		psoDesc.PS = { reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()), mpsByteCode->GetBufferSize() };
+		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		psoDesc.SampleMask = UINT_MAX;
+		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		psoDesc.NumRenderTargets = 1;
+		psoDesc.RTVFormats[0] = mBackBufferFormat;
+		psoDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+		psoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+		psoDesc.DSVFormat = mDepthStencilFormat;
+
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> mPSO;
+		md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO));
+
+
+		std::cout << "--- RENDERER ---  : Finished Drawing Cube" << std::endl;
 	}
 }
 
