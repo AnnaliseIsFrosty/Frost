@@ -11,7 +11,7 @@ namespace Frost
 		static UINT CalcConstantBufferByteSize(UINT byteSize) 
 		{	// Constant buffers must be a multiple of the minimum hardware allocation size (usually 256 bytes)
 			// So we round up to nearest multiple of 256 bytes by adding 255 then masking off the lower 2 bytes which store all bits < 256
-			return (byteSize + 255) & 255;
+			return (byteSize + 255) & ~255;
 		}
 
 

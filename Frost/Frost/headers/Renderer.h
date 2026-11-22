@@ -12,7 +12,7 @@ namespace Frost
 
 		virtual void Init() = 0;
 		virtual void Render() = 0;
-		virtual void OnResize() = 0;
+		virtual void OnResize(float width, float height) = 0;
 
 	protected:
 

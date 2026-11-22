@@ -32,6 +32,7 @@ namespace Frost {
 			}
 
 			m_Window->OnUpdate();
+			m_Renderer->Render();
 		}
 	}
 
@@ -52,7 +53,7 @@ namespace Frost {
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
 		std::cout << "RESIZED WINDOW HEE HO!" << std::endl;
-		m_Renderer->OnResize();
+		m_Renderer->OnResize(e.GetWidth(), e.GetHeight());
 		return true;
 	}
 }

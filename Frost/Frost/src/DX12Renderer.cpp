@@ -17,7 +17,17 @@ namespace Frost {
 
 	void DX12Renderer::Init()
 	{
-		std::cout << "INITIALISING RENDERER" << std::endl;
+		// std::cout << "INITIALISING RENDERER" << std::endl;
+
+#if defined(DEBUG) || defined(_DEBUG) 
+		// Enable the D3D12 debug layer.
+		{
+			Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+			D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
+			assert(debugController.Get());
+			debugController->EnableDebugLayer();
+		}
+#endif
 
 		// Create Factory
 		CreateDXGIFactory1(IID_PPV_ARGS(&mdxgiFactory)); // Used to create swap chain
@@ -80,105 +90,209 @@ namespace Frost {
 		// Create Descriptor Heaps
 		CreateRtvAndDsvDescriptorHeaps();
 
-
-		// Create an RTV for each buffer in swap chain
-		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
-		for (UINT i = 0; i < SwapChainBufferCount; i++)
 		{
-			// Get the ith buffer in the swap chain
-			mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffer[i]));
+			// ---------------------------
 
-			// Create an RTV to it
-			md3dDevice->CreateRenderTargetView(mSwapChainBuffer[i].Get(), nullptr, rtvHeapHandle);
+			//// Create an RTV for each buffer in swap chain
+			//CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
+			//for (UINT i = 0; i < SwapChainBufferCount; i++)
+			//{
+			//	// Get the ith buffer in the swap chain
+			//	mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffer[i]));
 
-			// Next entry in heap
-			rtvHeapHandle.Offset(1, mRtvDescriptorSize);
+			//	// Create an RTV to it
+			//	md3dDevice->CreateRenderTargetView(mSwapChainBuffer[i].Get(), nullptr, rtvHeapHandle);
+
+			//	// Next entry in heap
+			//	rtvHeapHandle.Offset(1, mRtvDescriptorSize);
+			//}
+
+			//// Create the depth/stencil buffer and view
+			//D3D12_RESOURCE_DESC depthStencilDesc;
+			//depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+			//depthStencilDesc.Alignment = 0;
+			//depthStencilDesc.Width = mClientWidth;
+			//depthStencilDesc.Height = mClientHeight;
+			//depthStencilDesc.DepthOrArraySize = 1;
+			//depthStencilDesc.MipLevels = 1;
+			//depthStencilDesc.Format = mDepthStencilFormat;
+			//depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+			//depthStencilDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+			//depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+			//depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+			//D3D12_CLEAR_VALUE optClear;
+			//optClear.Format = mDepthStencilFormat;
+			//optClear.DepthStencil.Depth = 1.f;
+			//optClear.DepthStencil.Stencil = 0;
+			//md3dDevice->CreateCommittedResource(
+			//	&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			//	D3D12_HEAP_FLAG_NONE,
+			//	&depthStencilDesc,
+			//	D3D12_RESOURCE_STATE_COMMON,
+			//	&optClear,
+			//	IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())
+			//);
+			//assert(mDepthStencilBuffer.Get());
+
+			//// Create Descriptor to mip level 0 of entire resource using the format of the resource
+			//md3dDevice->CreateDepthStencilView(
+			//	mDepthStencilBuffer.Get(),
+			//	nullptr,
+			//	DepthStencilView()
+			//);
+
+			//// Transition the resource from its initial state to be used as a depth buffer
+			//mCommandList->ResourceBarrier(
+			//	1,
+			//	&CD3DX12_RESOURCE_BARRIER::Transition(
+			//		mDepthStencilBuffer.Get(),
+			//		D3D12_RESOURCE_STATE_COMMON,
+			//		D3D12_RESOURCE_STATE_DEPTH_WRITE)
+			//);
+
+			//// Create and set viewport
+			//D3D12_VIEWPORT vp;
+			//vp.TopLeftX = 0.0f;
+			//vp.TopLeftY = 0.0f;
+			//vp.Width = static_cast<float>(mClientWidth);
+			//vp.Height = static_cast<float>(mClientHeight);
+			//vp.MinDepth = 0.0f;
+			//vp.MaxDepth = 1.0f;
+
+			//mCommandList->RSSetViewports(1, &vp);
+			//// The viewport needs to be reset whenever the command list is reset
+
+			//// Set Scissor rectangle
+			//mScissorRect = { 0, 0, mClientWidth, mClientHeight };
+			//mCommandList->RSSetScissorRects(1, &mScissorRect);
 		}
-
-		// Create the depth/stencil buffer and view
-		D3D12_RESOURCE_DESC depthStencilDesc;
-		depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-		depthStencilDesc.Alignment = 0;
-		depthStencilDesc.Width = mClientWidth;
-		depthStencilDesc.Height = mClientHeight;
-		depthStencilDesc.DepthOrArraySize = 1;
-		depthStencilDesc.MipLevels = 1;
-		depthStencilDesc.Format = mDepthStencilFormat;
-		depthStencilDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
-		depthStencilDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
-		depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-		depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-
-		D3D12_CLEAR_VALUE optClear;
-		optClear.Format = mDepthStencilFormat;
-		optClear.DepthStencil.Depth = 1.f;
-		optClear.DepthStencil.Stencil = 0;
-		md3dDevice->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-			D3D12_HEAP_FLAG_NONE,
-			&depthStencilDesc,
-			D3D12_RESOURCE_STATE_COMMON,
-			&optClear,
-			IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())
-		);
-		assert(mDepthStencilBuffer.Get());
-
-		// Create Descriptor to mip level 0 of entire resource using the format of the resource
-		md3dDevice->CreateDepthStencilView(
-			mDepthStencilBuffer.Get(),
-			nullptr,
-			DepthStencilView()
-		);
-
-		// Transition the resource from its initial state to be used as a depth buffer
-		mCommandList->ResourceBarrier(
-			1,
-			&CD3DX12_RESOURCE_BARRIER::Transition(
-				mDepthStencilBuffer.Get(),
-				D3D12_RESOURCE_STATE_COMMON,
-				D3D12_RESOURCE_STATE_DEPTH_WRITE)
-		);
-
-		// Create and set viewport
-		D3D12_VIEWPORT vp;
-		vp.TopLeftX = 0.0f;
-		vp.TopLeftY = 0.0f;
-		vp.Width = static_cast<float>(mClientWidth);
-		vp.Height = static_cast<float>(mClientHeight);
-		vp.MinDepth = 0.0f;
-		vp.MaxDepth = 1.0f;
-
-		mCommandList->RSSetViewports(1, &vp);
-		// The viewport needs to be reset whenever the command list is reset
-
-		// Set Scissor rectangle
-		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
-		mCommandList->RSSetScissorRects(1, &mScissorRect);
-
-
+		
 		// ------------------------------------------------------------
+		
+		mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr);
 
+
+		CreateCbvDescriptorHeaps();
+		CreateConstantBuffers();
 		CreateRootSignature();
 
-		mvsByteCode = CompileShader(L"../../../Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
-		mpsByteCode = CompileShader(L"../../../Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
+		//mvsByteCode = CompileShader(L"../../../Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
+		//mpsByteCode = CompileShader(L"../../../Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
+		mvsByteCode = CompileShader(L"Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
+		mpsByteCode = CompileShader(L"Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
+
+		mInputLayout =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"COLOR",	 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+		};
 
 		DrawStaticCube();
+
+		CreatePSO();
+
+		mCommandList->Close();
+		
+		ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+		mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		FlushCommandQueue();
+
+		OnResize(mClientWidth, mClientHeight);
 	}
 
 	void DX12Renderer::Render()
 	{
+		// Reuse the memory associated with command recording
+		// We can only reset when the associated command lists have finsihed execution on the GPU
+		mDirectCmdListAlloc->Reset();
+
+		// A command list can be reset after it has been added to the command queue via ExecuteCommandList
+		// Reusing the command list reuses memory
+		mCommandList->Reset(mDirectCmdListAlloc.Get(), mPSO.Get());
+
+		// Convert Spherical to Cartesian coordinates.
+		float x = mRadius * sinf(mPhi) * cosf(mTheta);
+		float z = mRadius * sinf(mPhi) * sinf(mTheta);
+		float y = mRadius * cosf(mPhi);
+
+		// Build the view matrix.
+		XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+		XMVECTOR target = XMVectorZero();
+		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+		XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+		XMStoreFloat4x4(&mView, view);
+
+		XMMATRIX world = XMLoadFloat4x4(&mWorld);
+		XMMATRIX proj = XMLoadFloat4x4(&mProj);
+		XMMATRIX worldViewProj = world * view * proj;
+
+		// Update the constant buffer with the latest worldViewProj matrix.
+		ObjectConstants objConstants;
+		XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+		mObjectCB->CopyData(0, objConstants);
+		
+		mCommandList->RSSetViewports(1, &mScreenViewport);
+		mCommandList->RSSetScissorRects(1, &mScissorRect);
+
+		// Indicate a state transition on the resource usage
+		mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		// Clear the back buffer and depth buffer
+		mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+		mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+		// Specify the buffers we are going to render to
+		mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+
+		ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
+		mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+		mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
+
+		mCommandList->IASetVertexBuffers(0, 1, &mBoxGeo->VertexBufferView());
+		//std::cout << mBoxGeo->VertexBufferView().BufferLocation << std::endl;
+		mCommandList->IASetIndexBuffer(&mBoxGeo->IndexBufferView());
+		//std::cout << mBoxGeo->IndexBufferView().BufferLocation << std::endl;
+		mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
+
+		mCommandList->DrawIndexedInstanced(mBoxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+
+		// Indicate a state transition on the resource usage
+		mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+		// Done recording commands
+		mCommandList->Close();
+
+		// Add the command list tot he queue for execution
+		ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+		mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		// Swap the back and front buffers
+		mSwapChain->Present(0, 0);
+		mCurrBackBuffer = (mCurrBackBuffer + 1) % SwapChainBufferCount;
+
+		// Wait until frame commands are complete (inefficient, for simplicity)
+		FlushCommandQueue();
+		//mBoxGeo->DisposeUploaders();
 
 	}
 
-	void DX12Renderer::OnResize()
+	void DX12Renderer::OnResize(float width, float height)
 	{
-		std::cout << "--- RENDERER ---  : Window Resized" << std::endl;
+		// std::cout << "--- RENDERER ---  : Window Resized" << std::endl;
 		
 		// Flush before changing any resources
 		FlushCommandQueue();
 
 		mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr);
+
+		mClientWidth = width;
+		mClientHeight = height;
 
 		// Release the previous resources we will be recreating
 		for (int i = 0; i < SwapChainBufferCount; i++)
@@ -268,12 +382,15 @@ namespace Frost {
 
 		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 
-		std::cout << "--- RENDERER ---  : Finished Resizing Window" << std::endl;
+		XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * XM_PI, width/height, 1.0f, 1000.0f);
+		XMStoreFloat4x4(&mProj, P);
+
+		// std::cout << "--- RENDERER ---  : Finished Resizing Window" << std::endl;
 	}
 
 	void DX12Renderer::CreateCommandObjects()
 	{
-		std::cout << "--- RENDERER ---  : Creating Command Objects" << std::endl;
+		// std::cout << "--- RENDERER ---  : Creating Command Objects" << std::endl;
 
 		D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -294,7 +411,7 @@ namespace Frost {
 
 	void DX12Renderer::CreateSwapChain()
 	{
-		std::cout << "--- RENDERER ---  : Creating Swap Chain" << std::endl;
+		// std::cout << "--- RENDERER ---  : Creating Swap Chain" << std::endl;
 
 		// Reset in case we had already created a swap chain previously
 		mSwapChain.Reset();
@@ -323,12 +440,12 @@ namespace Frost {
 			mCommandQueue.Get(),
 			&swapDesc,
 			mSwapChain.GetAddressOf());
-
+		assert(mSwapChain.Get());
 	}
 
 	void DX12Renderer::CreateRtvAndDsvDescriptorHeaps()
 	{
-		std::cout << "--- RENDERER ---  : Creating RTV and DSV Descriptor Heaps" << std::endl;
+		// std::cout << "--- RENDERER ---  : Creating RTV and DSV Descriptor Heaps" << std::endl;
 
 		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 		rtvHeapDesc.NumDescriptors = SwapChainBufferCount;
@@ -336,18 +453,25 @@ namespace Frost {
 		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		rtvHeapDesc.NodeMask = 0;
 		md3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(mRtvHeap.GetAddressOf()));
-		
+		assert(mRtvHeap.Get());
+
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
 		dsvHeapDesc.NumDescriptors = 1;
 		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		dsvHeapDesc.NodeMask = 0;
 		md3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(mDsvHeap.GetAddressOf()));
+		assert(mDsvHeap.Get());
+	}
+
+	ID3D12Resource* DX12Renderer::CurrentBackBuffer() const
+	{
+		return mSwapChainBuffer[mCurrBackBuffer].Get();
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE DX12Renderer::CurrentBackBufferView() const
 	{
-		std::cout << "--- RENDERER ---  : Getting back buffer view" << std::endl;
+		// std::cout << "--- RENDERER ---  : Getting back buffer view" << std::endl;
 		return CD3DX12_CPU_DESCRIPTOR_HANDLE(
 			mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
 			mCurrBackBuffer,
@@ -361,7 +485,7 @@ namespace Frost {
 
 	void DX12Renderer::FlushCommandQueue()
 	{
-		std::cout << "--- RENDERER ---  : Command Queue Flushed" << std::endl;
+		// std::cout << "--- RENDERER ---  : Command Queue Flushed" << std::endl;
 
 		mCurrentFence++;
 
@@ -435,56 +559,88 @@ namespace Frost {
 		// Note : uploadBuffer has to be kept alive after the above function calls because the command list has not been 
 		// executed yet that performs the actual copy 
 		// The caller can Release the uploadBuffer after it knows the copy has been executed
+		
+		// std::cout << "--- RENDERER ---  : Created Upload Buffer" << std::endl;
 
 		return defaultBuffer;
 	}
 
+	void DX12Renderer::CreateCbvDescriptorHeaps()
+	{
+		// Create Descriptor heaps ----------------------------------------------
+
+		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+		cbvHeapDesc.NumDescriptors = 1;
+		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		cbvHeapDesc.NodeMask = 0;
+
+		md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&mCbvHeap));
+		assert(mCbvHeap.Get());
+		
+		// std::cout << "--- RENDERER ---  : Created Descriptor Heaps" << std::endl;
+	}
+
+	void DX12Renderer::CreateConstantBuffers()
+	{
+		// Create Constant Buffers ----------------------------------------------
+
+		//ObjectConstants objConstants;
+
+		// Constant buffer to store the constants of n object
+		mObjectCB = std::make_unique<DX12UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
+
+		UINT objectCBByteSize = DX12UploadBuffer<ObjectConstants>::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+
+		// Address to start of the buffer (0th constant buffer)
+		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
+
+		// Offset to the ith object constant buffer in the buffer
+		int boxCBufIndex = 0; // i
+		cbAddress += boxCBufIndex * objectCBByteSize;
+
+		// Describes subset of the constant buffer resource to bind to the HLSL constant buffer structure
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+		cbvDesc.BufferLocation = cbAddress;
+		cbvDesc.SizeInBytes = objectCBByteSize;
+
+		md3dDevice->CreateConstantBufferView(&cbvDesc, mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+
+		// std::cout << "--- RENDERER ---  : Created CBV" << std::endl;
+
+	}
+
 	void DX12Renderer::CreateRootSignature()
 	{
-		// Root parameter can be a table, root descriptor or root constants
 		CD3DX12_ROOT_PARAMETER slotRootParameter[1];
 
-		// Create a single descriptor table of CBVs
+		// Create a single descriptor table of CBVs.
 		CD3DX12_DESCRIPTOR_RANGE cbvTable;
-		cbvTable.Init(
-			D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-			1,			// Number of descriptors in the table
-			0);			// The base shader register arguments are bound to for this root parameter
+		cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+		slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
 
-		slotRootParameter[0].InitAsDescriptorTable(
-			1,			// Number of ranges
-			&cbvTable); // Pointer to array of ranges
+		// A root signature is an array of root parameters.
+		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-		// A root signature is an array of root parameters
-		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-		// Create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
+		// create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
 		Microsoft::WRL::ComPtr<ID3DBlob> serializedRootSig = nullptr;
 		Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-		HRESULT hr = D3D12SerializeRootSignature(
-			&rootSigDesc,
-			D3D_ROOT_SIGNATURE_VERSION_1,
-			serializedRootSig.GetAddressOf(),
-			errorBlob.GetAddressOf());
-		assert(errorBlob == nullptr);
+		HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+			serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
 
-		md3dDevice->CreateRootSignature(
+		if (errorBlob != nullptr)
+		{
+			::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+		}
+
+		HRESULT hr2 = md3dDevice->CreateRootSignature(
 			0,
 			serializedRootSig->GetBufferPointer(),
 			serializedRootSig->GetBufferSize(),
 			IID_PPV_ARGS(&mRootSignature));
+		HRESULT hr3 = md3dDevice->GetDeviceRemovedReason();
 		assert(mRootSignature.Get());
-
-		std::cout << "--- RENDERER ---  : Created Root Signature" << std::endl;
-
-		//// Set the root signature and CBV heap to the command list, and set the descriptor table identifying the resource we want to bind to the pipeline
-		//mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
-		//ID3D12DescriptorHeap* descriptorHeaps[] = { mCbvHeap.Get() };
-		//mCommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-		//// Offset the CBV we want to use for this draw call
-		//CD3DX12_GPU_DESCRIPTOR_HANDLE cbv(mCbvHeap->GetGPUDescriptorHandleForHeapStart());
-		//cbv.Offset(cbvIndex, mCbvSrvUavDescriptorSize);
 	}
 
 	Microsoft::WRL::ComPtr<ID3DBlob> DX12Renderer::CompileShader(const std::wstring& filename, const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target)
@@ -504,7 +660,7 @@ namespace Frost {
 
 		if (FAILED(hr))
 		{
-			std::cout << "Failed to compile shader" << std::endl;
+			// std::cout << "Failed to compile shader" << std::endl;
 		}
 
 		// Output errors to debug window
@@ -513,7 +669,7 @@ namespace Frost {
 
 		assert(byteCode);
 
-		std::cout << "--- RENDERER ---  : Finished Compiling Shader code" << std::endl;
+		// std::cout << "--- RENDERER ---  : Finished Compiling Shader code" << std::endl;
 
 		return byteCode;
 	}
@@ -521,126 +677,150 @@ namespace Frost {
 
 	void DX12Renderer::DrawStaticCube()
 	{
+
+		// GEOMETRY
+
 		mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		
-
-		// VERTICES 
-
-		Vertex vertices[] = 
+		std::array<Vertex, 8> vertices = 
 		{ 
-			{ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1, 1, 1, 1) },
-			{ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(0, 0, 0, 1) },
-			{ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(1, 0, 0, 1) },
-			{ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(0, 1, 0, 1) },
-			{ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(0, 0, 1, 1) },
-			{ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(1, 1, 0, 1) },
-			{ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(0, 1, 1, 1) },
-			{ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(1, 0, 1, 1) } 
+			Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1, 1, 1, 1) }),
+			Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(0, 0, 0, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(1, 0, 0, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(0, 1, 0, 1) }),
+			Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(0, 0, 1, 1) }),
+			Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(1, 1, 0, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(0, 1, 1, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(1, 0, 1, 1) }) 
 		};
 
-		const UINT vertexCount = 8;
-		const UINT vbByteSize = vertexCount * sizeof(Vertex);
-		UINT startVertexLocation = 0; // Location in the global vertex buffer that this cube's vertices start
-
-		Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferGPU = nullptr;
-		Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferUploader = nullptr;
-		VertexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), vertices, vbByteSize, VertexBufferUploader);
-
-		D3D12_VERTEX_BUFFER_VIEW vbv;
-		vbv.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
-		vbv.StrideInBytes = sizeof(Vertex);
-		vbv.SizeInBytes = vbByteSize;
-
-		D3D12_VERTEX_BUFFER_VIEW vertexBuffers[1] = { vbv };
-		mCommandList->IASetVertexBuffers(0, 1, vertexBuffers);
-	
-		mCommandList->DrawInstanced(vertexCount, 1, startVertexLocation, 0);
-
-
-		// INDICES 
-	
-		std::uint16_t indices[] = 
-		{   
-			// front face   
-			0, 1, 2,   
-			0, 2, 3,     
-			// back face   
-			4, 6, 5,   
-			4, 7, 6,     
-			// left face   
-			4, 5, 1,   
-			4, 1, 0,     
-			// right face   
-			3, 2, 6,   
-			3, 6, 7,     
-			// top face
-			1, 5, 6,   
-			1, 6, 2,     
-			// bottom face   
-			4, 0, 3,   
-			4, 3, 7 
-		};
-
-		const UINT indexCount = 36;
-		const UINT ibByteSize = indexCount * sizeof(std::uint16_t);
-		UINT startIndexLocation = 0;
-
-		Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferGPU = nullptr;
-		Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferUploader = nullptr;
-		IndexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), indices, ibByteSize, IndexBufferUploader);
-
-		D3D12_INDEX_BUFFER_VIEW ibv;
-		ibv.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
-		ibv.Format = DXGI_FORMAT_R16_UINT;
-		ibv.SizeInBytes = ibByteSize;
-
-		mCommandList->IASetIndexBuffer(&ibv);
-
-		mCommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, startVertexLocation, 0);
-
-
-		// SHADER
-
-		D3D12_INPUT_ELEMENT_DESC desc[] =
+		std::array<std::uint16_t, 36> indices =
 		{
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-			{"COLOR",	 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+			// front face
+			0, 1, 2,
+			0, 2, 3,
+
+			// back face
+			4, 6, 5,
+			4, 7, 6,
+
+			// left face
+			4, 5, 1,
+			4, 1, 0,
+
+			// right face
+			3, 2, 6,
+			3, 6, 7,
+
+			// top face
+			1, 5, 6,
+			1, 6, 2,
+
+			// bottom face
+			4, 0, 3,
+			4, 3, 7
 		};
 
+		const UINT vertexCount = (UINT)vertices.size();
+		const UINT vbByteSize = vertexCount * sizeof(Vertex);
+		
+		const UINT indexCount = (UINT)indices.size();
+		const UINT ibByteSize = indexCount * sizeof(std::uint16_t);
 
-		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-		cbvHeapDesc.NumDescriptors = 1;
-		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		cbvHeapDesc.NodeMask = 0;
+		mBoxGeo = std::make_unique<MeshGeometry>();
+		mBoxGeo->Name = "boxGeo";
 
-		md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&mCbvHeap));
-		assert(mCbvHeap.Get());
+		D3DCreateBlob(vbByteSize, &mBoxGeo->VertexBufferCPU);
+		assert(mBoxGeo->VertexBufferCPU.Get());
+		CopyMemory(mBoxGeo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+		
+		D3DCreateBlob(ibByteSize, &mBoxGeo->IndexBufferCPU);
+		assert(mBoxGeo->IndexBufferCPU.Get());
+		CopyMemory(mBoxGeo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+
+		mBoxGeo->VertexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), vertices.data(), vbByteSize, mBoxGeo->VertexBufferUploader);
+		mBoxGeo->IndexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), indices.data(), ibByteSize, mBoxGeo->IndexBufferUploader);
+
+		mBoxGeo->VertexByteStride = sizeof(Vertex);
+		mBoxGeo->VertexBufferByteSize = vbByteSize;
+		mBoxGeo->IndexFormat = DXGI_FORMAT_R16_UINT;
+		mBoxGeo->IndexBufferByteSize = ibByteSize;
+
+		SubmeshGeometry submesh;
+		submesh.IndexCount = indexCount;
+		submesh.StartIndexLocation = 0;
+		submesh.BaseVertexLocation = 0;
+
+		mBoxGeo->DrawArgs["box"] = submesh;
+
+		{
+			//Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferGPU = nullptr;
+			//Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferUploader = nullptr;
+			//VertexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), vertices, vbByteSize, VertexBufferUploader);
+
+			//D3D12_VERTEX_BUFFER_VIEW vbv;
+			//vbv.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
+			//vbv.StrideInBytes = sizeof(Vertex);
+			//vbv.SizeInBytes = vbByteSize;
+
+			//D3D12_VERTEX_BUFFER_VIEW vertexBuffers[1] = { vbv };
+			//mCommandList->IASetVertexBuffers(0, 1, vertexBuffers);
+
+			//mCommandList->DrawInstanced(vertexCount, 1, startVertexLocation, 0);
 
 
-		ObjectConstants objConstants;
+			// INDICES 
 
-		// Constant buffer to store the constants of n object
-		std::unique_ptr<DX12UploadBuffer<ObjectConstants>> mObjectCB = nullptr;		   // n
-		mObjectCB = std::make_unique<DX12UploadBuffer<ObjectConstants>>(md3dDevice.Get(), 1, true);
-		//mUploadCBuffer->CopyData(0, objConstants);
+			//std::uint16_t indices[] = 
+			//{   
+			//	// front face   
+			//	0, 1, 2,   
+			//	0, 2, 3,     
+			//	// back face   
+			//	4, 6, 5,   
+			//	4, 7, 6,     
+			//	// left face   
+			//	4, 5, 1,   
+			//	4, 1, 0,     
+			//	// right face   
+			//	3, 2, 6,   
+			//	3, 6, 7,     
+			//	// top face
+			//	1, 5, 6,   
+			//	1, 6, 2,     
+			//	// bottom face   
+			//	4, 0, 3,   
+			//	4, 3, 7 
+			//};
 
-		UINT objectCBByteSize = DX12UploadBuffer<ObjectConstants>::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+			//const UINT indexCount = 36;
+			//const UINT ibByteSize = indexCount * sizeof(std::uint16_t);
+			//UINT startIndexLocation = 0;
 
-		// Address to start of the buffer (0th constant buffer)
-		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
+			//Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferGPU = nullptr;
+			//Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferUploader = nullptr;
+			//IndexBufferGPU = CreateDefaultBuffer(md3dDevice.Get(), mCommandList.Get(), indices, ibByteSize, IndexBufferUploader);
 
-		// Offset to the ith object constant buffer in the buffer
-		int boxCBufIndex = 0; // i
-		cbAddress += boxCBufIndex * objectCBByteSize;
+			//D3D12_INDEX_BUFFER_VIEW ibv;
+			//ibv.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
+			//ibv.Format = DXGI_FORMAT_R16_UINT;
+			//ibv.SizeInBytes = ibByteSize;
 
-		// Describes subset of the constant buffer resource to bind to the HLSL constant buffer structure
-		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-		cbvDesc.BufferLocation = cbAddress;
-		cbvDesc.SizeInBytes = objectCBByteSize;
+			//mCommandList->IASetIndexBuffer(&ibv);
 
-		md3dDevice->CreateConstantBufferView(&cbvDesc, mCbvHeap->GetCPUDescriptorHandleForHeapStart());
+			//mCommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, startVertexLocation, 0);
 
+
+			// SHADER
+		}
+
+		// std::cout << "--- RENDERER ---  : Finished Drawing Cube" << std::endl;
+
+		
+	}
+
+	void DX12Renderer::CreatePSO()
+	{
 		// ---- PSO ----
 
 		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -659,11 +839,10 @@ namespace Frost {
 		psoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
 		psoDesc.DSVFormat = mDepthStencilFormat;
 
-		Microsoft::WRL::ComPtr<ID3D12PipelineState> mPSO;
 		md3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&mPSO));
 
+		// std::cout << "--- RENDERER ---  : Finished Creating PSO" << std::endl;
 
-		std::cout << "--- RENDERER ---  : Finished Drawing Cube" << std::endl;
 	}
 }
 

@@ -5,8 +5,85 @@
 
 using namespace DirectX;
 
+#define _DEBUG
+
+
 namespace Frost
 {
+	struct Vertex
+	{
+		XMFLOAT3 vPos;
+		XMFLOAT4 Colour;
+	};
+
+	struct ObjectConstants
+	{
+		XMFLOAT4X4 WorldViewProj = XMFLOAT4X4(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
+	};
+
+	struct SubmeshGeometry
+	{
+		UINT IndexCount = 0;
+		UINT StartIndexLocation = 0;
+		INT BaseVertexLocation = 0;
+
+		// Bounding box of the geometry defined by this submesh
+		DirectX::BoundingBox Bounds;
+	};
+
+	struct MeshGeometry
+	{
+		std::string Name;
+
+		Microsoft::WRL::ComPtr<ID3DBlob> VertexBufferCPU = nullptr;
+		Microsoft::WRL::ComPtr<ID3DBlob> IndexBufferCPU = nullptr;
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferGPU = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferGPU = nullptr;
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> VertexBufferUploader = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> IndexBufferUploader = nullptr;
+
+		// Data about the buffers
+		UINT VertexByteStride = 0;
+		UINT VertexBufferByteSize = 0;
+		DXGI_FORMAT IndexFormat = DXGI_FORMAT_R16_UINT;
+		UINT IndexBufferByteSize = 0;
+
+		// MeshGeometry may store multiple geometries in one vertex/index buffer
+		// Use this container to define the Submesh geometries so we can draw them individually
+		std::unordered_map<std::string, SubmeshGeometry> DrawArgs;
+
+		D3D12_VERTEX_BUFFER_VIEW VertexBufferView() const
+		{
+			D3D12_VERTEX_BUFFER_VIEW vbv;
+			vbv.BufferLocation = VertexBufferGPU->GetGPUVirtualAddress();
+			vbv.StrideInBytes = VertexByteStride;
+			vbv.SizeInBytes = VertexBufferByteSize;
+
+			return vbv;
+		}
+
+		D3D12_INDEX_BUFFER_VIEW IndexBufferView() const
+		{
+			D3D12_INDEX_BUFFER_VIEW ibv;
+			ibv.BufferLocation = IndexBufferGPU->GetGPUVirtualAddress();
+			ibv.Format = IndexFormat;
+			ibv.SizeInBytes = IndexBufferByteSize;
+
+			return ibv;
+		}
+
+		void DisposeUploaders()
+		{
+			VertexBufferUploader = nullptr;
+			IndexBufferUploader = nullptr;
+		}
+	};
 
 	class DX12Renderer : public Renderer
 	{
@@ -14,20 +91,24 @@ namespace Frost
 		DX12Renderer(void* hwnd);
 		void Init() override;
 		void Render() override;
-		void OnResize() override;
+		void OnResize(float width, float height) override;
 		void CreateCommandObjects();
 		void CreateSwapChain();
 		void CreateRtvAndDsvDescriptorHeaps();
 		void FlushCommandQueue();
+		ID3D12Resource* CurrentBackBuffer() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
 		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
 		Microsoft::WRL::ComPtr<ID3D12Resource> CreateDefaultBuffer(ID3D12Device* device, ID3D12GraphicsCommandList* cmdList,
 																	const void* initData, UINT64 byteSize, 
 																	Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
+		
+		void CreateCbvDescriptorHeaps();
+		void CreateConstantBuffers();
 		void CreateRootSignature();
 		Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(const std::wstring& filename, const D3D_SHADER_MACRO* defines, const std::string& entrypoint, const std::string& target);
-
 		void DrawStaticCube();
+		void CreatePSO();
 
 	protected:
 
@@ -77,20 +158,31 @@ namespace Frost
 		Microsoft::WRL::ComPtr<ID3DBlob> mpsByteCode;
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
-	};
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> mPSO;
 
-	struct Vertex
-	{
-		XMFLOAT3 vPos;
-		XMFLOAT4 Colour;
-	};
+		std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;
+		std::unique_ptr<DX12UploadBuffer<ObjectConstants>> mObjectCB = nullptr;		   // n
 	
-	struct ObjectConstants
-	{
-		XMFLOAT4X4 WorldViewProj = XMFLOAT4X4(
+		XMFLOAT4X4 mWorld = XMFLOAT4X4(
 			1.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
+		XMFLOAT4X4 mView = XMFLOAT4X4(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
+		XMFLOAT4X4 mProj = XMFLOAT4X4(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
+
+		float mTheta = 1.5f * XM_PI;
+		float mPhi = XM_PIDIV4;
+		float mRadius = 5.0f;
 	};
+
+	
 }
