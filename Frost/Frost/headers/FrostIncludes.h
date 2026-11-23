@@ -18,6 +18,7 @@
 #include <d3dcompiler.h>
 #include <DirectXCollision.h>
 #include <DirectXColors.h>
+#include <directxpackedvector.h>
 #include <format> // C++20 header
 #include <DirectXMath.h>
 #include <wrl/client.h> // ComPtr smart pointers

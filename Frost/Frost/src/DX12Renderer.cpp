@@ -177,15 +177,19 @@ namespace Frost {
 		CreateConstantBuffers();
 		CreateRootSignature();
 
-		//mvsByteCode = CompileShader(L"../../../Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
-		//mpsByteCode = CompileShader(L"../../../Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
-		mvsByteCode = CompileShader(L"Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
-		mpsByteCode = CompileShader(L"Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
+		mvsByteCode = CompileShader(L"../../../Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
+		mpsByteCode = CompileShader(L"../../../Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
+		//mvsByteCode = CompileShader(L"Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
+		//mpsByteCode = CompileShader(L"Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
 
 		mInputLayout =
 		{
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-			{"COLOR",	 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+			{"POSITION",    0, DXGI_FORMAT_R32G32B32_FLOAT,           0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,           0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,           0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TEXCOORD[0]", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TEXCOORD[1]", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"COLOR",	    0, DXGI_FORMAT_R32G32B32A32_FLOAT,        0, 52, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 		};
 
 		DrawStaticCube();
@@ -684,14 +688,14 @@ namespace Frost {
 		
 		std::array<Vertex, 8> vertices = 
 		{ 
-			Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1, 1, 1, 1) }),
-			Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(0, 0, 0, 1) }),
-			Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(1, 0, 0, 1) }),
-			Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(0, 1, 0, 1) }),
-			Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(0, 0, 1, 1) }),
-			Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(1, 1, 0, 1) }),
-			Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(0, 1, 1, 1) }),
-			Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(1, 0, 1, 1) }) 
+			Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(1, 1, 1, 1) }),
+			Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(0, 0, 0, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(1, 0, 0, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(0, 1, 0, 1) }),
+			Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(0, 0, 1, 1) }),
+			Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(1, 1, 0, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(0, 1, 1, 1) }),
+			Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT2(-1.0f, -1.0f), XMFLOAT4(1, 0, 1, 1) }) 
 		};
 
 		std::array<std::uint16_t, 36> indices =

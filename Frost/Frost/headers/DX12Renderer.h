@@ -12,8 +12,12 @@ namespace Frost
 {
 	struct Vertex
 	{
-		XMFLOAT3 vPos;
-		XMFLOAT4 Colour;
+		XMFLOAT3 Pos;
+		XMFLOAT3 Tangent;
+		XMFLOAT3 Normal;
+		XMFLOAT2 Tex0;
+		XMFLOAT2 Tex1;
+		XMFLOAT4 Color;
 	};
 
 	struct ObjectConstants
