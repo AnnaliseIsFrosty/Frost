@@ -27,6 +27,8 @@ namespace Frost
 			0.0f, 1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
+		
+		XMFLOAT4 gTime;
 	};
 
 	struct SubmeshGeometry
@@ -94,7 +96,7 @@ namespace Frost
 	public:
 		DX12Renderer(void* hwnd);
 		void Init() override;
-		void Render() override;
+		void Render(double time) override;
 		void OnResize(float width, float height) override;
 		void CreateCommandObjects();
 		void CreateSwapChain();

@@ -3,6 +3,7 @@
 cbuffer cbPerObject : register(b0)
 {
     float4x4 gWorldViewProj;
+    float4 time;
 };
 
 struct InputType
@@ -22,6 +23,7 @@ OutputType VS(InputType input)
     OutputType output;
     
     // Transform to homogenous clip space
+    input.pos.y += 0.5 * sin(input.pos.z + time.x * 3.f);
     output.pos = mul(float4(input.pos, 1.0f), gWorldViewProj);
 
     // Pass vertex colour to pixel shader

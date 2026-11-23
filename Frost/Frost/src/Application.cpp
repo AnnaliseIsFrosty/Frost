@@ -34,7 +34,7 @@ namespace Frost {
 			}
 
 			m_Window->OnUpdate();
-			m_Renderer->Render();
+			m_Renderer->Render(timer.GetTime());
 		}
 	}
 

@@ -206,7 +206,7 @@ namespace Frost {
 		OnResize(mClientWidth, mClientHeight);
 	}
 
-	void DX12Renderer::Render()
+	void DX12Renderer::Render(double time)
 	{
 		// Reuse the memory associated with command recording
 		// We can only reset when the associated command lists have finsihed execution on the GPU
@@ -236,6 +236,7 @@ namespace Frost {
 		// Update the constant buffer with the latest worldViewProj matrix.
 		ObjectConstants objConstants;
 		XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+		objConstants.gTime = XMFLOAT4(time, 0, 0, 0);
 		mObjectCB->CopyData(0, objConstants);
 		
 		mCommandList->RSSetViewports(1, &mScreenViewport);
