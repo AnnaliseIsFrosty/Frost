@@ -26,6 +26,8 @@ namespace Frost {
 				std::cout << "Space pressed!" << std::endl;
 			}*/
 
+			std::cout << timer.GetTime() << std::endl;
+
 			if (Input::IsKeyPressed(FrostKeycode::SPACE))
 			{
 				std::cout << "FROSTY SPACE YAYA!" << std::endl;

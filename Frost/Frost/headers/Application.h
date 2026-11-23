@@ -5,6 +5,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Input.h"
 #include "Renderer.h"
+#include "Timer.h"
 
 namespace Frost {
 	class Application {
@@ -15,6 +16,10 @@ namespace Frost {
 		void Run();
 
 		void OnEvent(Event& event);
+
+	protected:
+		Timer timer;
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);

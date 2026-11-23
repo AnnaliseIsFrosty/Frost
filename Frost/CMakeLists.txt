@@ -40,7 +40,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(DirectX-Headers)
 
 
-add_library(Frost SHARED Frost/src/Application.cpp  Frost/src/WindowsWindow.cpp "Frost/src/WindowsInput.cpp" "Frost/src/DX12Renderer.cpp")
+add_library(Frost SHARED Frost/src/Application.cpp  Frost/src/WindowsWindow.cpp "Frost/src/WindowsInput.cpp" "Frost/src/DX12Renderer.cpp" "Frost/src/Timer.cpp")
 add_executable(Sandbox Sandbox/src/Sandbox.cpp)
 target_include_directories(Frost PUBLIC Frost/headers)
 
