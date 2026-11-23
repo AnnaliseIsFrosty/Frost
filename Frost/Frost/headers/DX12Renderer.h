@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "FrostIncludes.h"
 #include "DX12UploadBuffer.h"
+#include "DX12CBContents.h"
+#include "DX12FrameResource.h"
 
 using namespace DirectX;
 
@@ -20,19 +22,7 @@ namespace Frost
 		XMFLOAT2 Tex1;
 		XMFLOAT4 Color;
 	};
-
-	struct ObjectConstants
-	{
-		XMFLOAT4X4 WorldViewProj = XMFLOAT4X4(
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
-		
-		XMFLOAT4 gTime;
-		XMFLOAT4 pulseColor;
-	};
-
+ 
 	struct SubmeshGeometry
 	{
 		UINT IndexCount = 0;
@@ -190,6 +180,17 @@ namespace Frost
 		float mTheta = 1.5f * XM_PI;
 		float mPhi = XM_PIDIV4;
 		float mRadius = 5.0f;
+
+
+		// Frame resources --------------------
+		
+		
+		//static const int NumFrameResources = 3;
+		//std::vector<std::unique_ptr<FrameResource>> mFrameResources;
+		//FrameResource* mCurrFrameResource = nullptr;
+		//int mCurrFrameResourceIndex = 0;
+
+		//void CreateFrameResources();
 	};
 
 	

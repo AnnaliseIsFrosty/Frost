@@ -235,7 +235,8 @@ namespace Frost {
 
 		// Update the constant buffer with the latest worldViewProj matrix.
 		ObjectConstants objConstants;
-		XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+		objConstants.WorldViewProj = XMMatrixTranspose(worldViewProj);
+	
 		objConstants.gTime = XMFLOAT4(time, 0, 0, 0);
 		objConstants.pulseColor = XMFLOAT4(Colors::Aquamarine);
 		mObjectCB->CopyData(0, objConstants);
@@ -855,5 +856,16 @@ namespace Frost {
 		// std::cout << "--- RENDERER ---  : Finished Creating PSO" << std::endl;
 
 	}
+
+
+
+
+	//void DX12Renderer::CreateFrameResources()
+	//{
+	//	for (int i = 0; i < NumFrameResources; ++i)
+	//	{
+	//		//mFrameResources.push_back(std::make_unique<FrameResource>(md3dDevice.Get(), 1, (UINT)mAllRi))
+	//	}
+	//}
 }
 
