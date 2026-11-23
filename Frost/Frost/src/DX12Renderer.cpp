@@ -237,6 +237,7 @@ namespace Frost {
 		ObjectConstants objConstants;
 		XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
 		objConstants.gTime = XMFLOAT4(time, 0, 0, 0);
+		objConstants.pulseColor = XMFLOAT4(Colors::Aquamarine);
 		mObjectCB->CopyData(0, objConstants);
 		
 		mCommandList->RSSetViewports(1, &mScreenViewport);
@@ -833,7 +834,12 @@ namespace Frost {
 		psoDesc.pRootSignature = mRootSignature.Get();
 		psoDesc.VS = { reinterpret_cast<BYTE*>(mvsByteCode->GetBufferPointer()), mvsByteCode->GetBufferSize() };
 		psoDesc.PS = { reinterpret_cast<BYTE*>(mpsByteCode->GetBufferPointer()), mpsByteCode->GetBufferSize() };
-		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		CD3DX12_RASTERIZER_DESC rasterizerDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+#ifdef WIREFRAME
+		rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+#endif
+		psoDesc.RasterizerState = rasterizerDesc;
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 		psoDesc.SampleMask = UINT_MAX;

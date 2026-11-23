@@ -7,6 +7,7 @@ using namespace DirectX;
 
 #define _DEBUG
 
+//#define WIREFRAME
 
 namespace Frost
 {
@@ -29,6 +30,7 @@ namespace Frost
 			0.0f, 0.0f, 0.0f, 1.0f);
 		
 		XMFLOAT4 gTime;
+		XMFLOAT4 pulseColor;
 	};
 
 	struct SubmeshGeometry

@@ -20,22 +20,19 @@ namespace Frost {
 	void Application::Run() {
 		while (m_Running)
 		{
-			//std::cout << "Mouse X : " << Input::GetMouseX() << " ; Mouse Y : " << Input::GetMouseY() << std::endl;
-			/*if (Input::IsKeyPressed(SDLK_SPACE))
-			{
-				std::cout << "Space pressed!" << std::endl;
-			}*/
-
-			std::cout << timer.GetTime() << std::endl;
-
-			if (Input::IsKeyPressed(FrostKeycode::SPACE))
-			{
-				std::cout << "FROSTY SPACE YAYA!" << std::endl;
-			}
+			//if (Input::IsKeyPressed(FrostKeycode::SPACE))
+			//{
+			//	std::cout << "FROSTY SPACE YAYA!" << std::endl;
+			//}
 
 			m_Window->OnUpdate();
 			m_Renderer->Render(timer.GetTime());
+		
+		
+			mApp->Run();
+
 		}
+	
 	}
 
 	void Application::OnEvent(Event& e)

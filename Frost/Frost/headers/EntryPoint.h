@@ -9,6 +9,7 @@ int main()
 {
 	printf("Frost Engine booted up! Hee-Ho!\n");
 	auto app = Frost::CreateApplication();
-	app->Run();
+	app->SetApp(app);
+	app->Frost::Application::Run();
 	delete app;
 }
