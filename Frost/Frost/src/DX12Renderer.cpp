@@ -177,8 +177,8 @@ namespace Frost {
 		CreateConstantBuffers();
 		CreateRootSignature();
 
-		mvsByteCode = CompileShader(L"../../../Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
-		mpsByteCode = CompileShader(L"../../../Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
+		mvsByteCode = CompileShader(L"../../../Frost/shaders/experiment_vs.hlsl", nullptr, "VS", "vs_5_0");
+		mpsByteCode = CompileShader(L"../../../Frost/shaders/experiment_ps.hlsl", nullptr, "PS", "ps_5_0");
 		//mvsByteCode = CompileShader(L"Frost/shaders/identity_vs.hlsl", nullptr, "VS", "vs_5_0");
 		//mpsByteCode = CompileShader(L"Frost/shaders/identity_ps.hlsl", nullptr, "PS", "ps_5_0");
 
@@ -860,12 +860,30 @@ namespace Frost {
 
 
 
-	//void DX12Renderer::CreateFrameResources()
-	//{
-	//	for (int i = 0; i < NumFrameResources; ++i)
-	//	{
-	//		//mFrameResources.push_back(std::make_unique<FrameResource>(md3dDevice.Get(), 1, (UINT)mAllRi))
-	//	}
-	//}
+	void DX12Renderer::CreateFrameResources()
+	{
+		for (int i = 0; i < gNumFrameResources; ++i)
+		{
+			mFrameResources.push_back(std::make_unique<FrameResource>(md3dDevice.Get(), 1, (UINT)mAllRitems.size()));
+		}
+	}
+
+	void DX12Renderer::FrameResourcesUpdate()
+	{
+		// Cycle through the circular frame resource array
+		mCurrFrameResourceIndex = (mCurrFrameResourceIndex + 1) % gNumFrameResources;
+		mCurrFrameResource = mFrameResources[mCurrFrameResourceIndex].get();
+	
+		// Has the GPU finished processing the commands of the current frame resource? If not, wait until the GPU has completed commands up to this fence point
+		if (mCurrFrameResource->Fence != 0 && mFence->GetCompletedValue() < mCurrFrameResource->Fence)
+		{
+			HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+			mFence->SetEventOnCompletion(mCurrFrameResource->Fence, eventHandle);
+			WaitForSingleObject(eventHandle, INFINITE);
+			CloseHandle(eventHandle);
+		}
+
+		// Update resources in mCurrFrameResource (like cbuffers)
+	}
 }
 
