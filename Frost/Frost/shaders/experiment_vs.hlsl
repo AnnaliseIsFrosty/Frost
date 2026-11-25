@@ -2,6 +2,7 @@
 
 cbuffer cbPerObject : register(b0)
 {
+    float4x4 gView;
     float4x4 gWorldViewProj;
     float4 time;
     float4 pulseColor;

@@ -245,8 +245,9 @@ namespace Frost {
 
 		// Update the constant buffer with the latest worldViewProj matrix.
 		ObjectConstants objConstants;
+		objConstants.World = XMMatrixIdentity();
+		
 		objConstants.WorldViewProj = XMMatrixTranspose(worldViewProj);
-	
 		objConstants.gTime = XMFLOAT4(time, 0, 0, 0);
 		objConstants.pulseColor = XMFLOAT4(Colors::Aquamarine);
 		mObjectCB->CopyData(0, objConstants);
