@@ -8,4 +8,6 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 #include "Events/ApplicationEvent.h"
+#include "WindowsInput.h"
 #include "Input.h"
+#include "Timer.h"

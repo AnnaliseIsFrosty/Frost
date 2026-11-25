@@ -21,6 +21,7 @@ namespace Frost
 	public:
 		DX12Renderer(void* hwnd);
 		void Init() override;
+		void Update(double time);
 		void Render(double time) override;
 		void OnResize(float width, float height) override;
 		void CreateCommandObjects();
@@ -94,21 +95,9 @@ namespace Frost
 		std::unique_ptr<MeshGeometry> mBoxGeo = nullptr;
 		std::unique_ptr<DX12UploadBuffer<ObjectConstants>> mObjectCB = nullptr;		   // n
 	
-		XMFLOAT4X4 mWorld = XMFLOAT4X4(
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
-		XMFLOAT4X4 mView = XMFLOAT4X4(
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
-		XMFLOAT4X4 mProj = XMFLOAT4X4(
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
+		XMMATRIX mWorld = XMMatrixIdentity();
+		XMMATRIX mView = XMMatrixIdentity();
+		XMMATRIX mProj = XMMatrixIdentity();
 
 		float mTheta = 1.5f * XM_PI;
 		float mPhi = XM_PIDIV4;
@@ -119,6 +108,8 @@ namespace Frost
 		
 		void CreateFrameResources();
 		void FrameResourcesUpdate();
+		void UpdateObjectCBs();
+		void UpdateMainPassCBs();
 
 		static const int gNumFrameResources = 3;
 		std::vector<std::unique_ptr<FrameResource>> mFrameResources;
@@ -131,6 +122,9 @@ namespace Frost
 		// Render items divided by POS
 		std::vector<RenderItem*> mOpaqueRItems;
 		std::vector<RenderItem*> mTransparentRItems;
+
+		PassConstants mMainPassCB;
+		XMFLOAT3 mEyePos = { 0.0f, 0.0f, 0.0f };
 	};
 
 	

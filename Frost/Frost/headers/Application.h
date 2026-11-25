@@ -13,15 +13,15 @@ namespace Frost {
 		Application();
 		virtual ~Application();
 
-		void SetApp(Application* app) { mApp = app; };
+		void SetApp(Application* app) { m_App = app; };
 
 		virtual  void Run();
 
 		void OnEvent(Event& event);
 
 	protected:
-		Application* mApp;
-		Timer timer;
+		Application* m_App;
+		Timer m_Timer;
 		std::unique_ptr<Window> m_Window;
 		std::unique_ptr<Renderer> m_Renderer;
 

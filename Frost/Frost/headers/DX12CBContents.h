@@ -27,8 +27,11 @@ namespace Frost
 
 	struct ObjectConstants
 	{
-		XMMATRIX WorldViewProj = XMMatrixIdentity();
+		XMMATRIX World = XMMatrixIdentity();
 
+
+		// ----------------------------------------
+		XMMATRIX WorldViewProj = XMMatrixIdentity();
 		XMFLOAT4 gTime;
 		XMFLOAT4 pulseColor;
 	};

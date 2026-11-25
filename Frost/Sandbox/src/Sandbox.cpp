@@ -16,13 +16,15 @@ public :
 	{
 		//std::cout << "App running" << std::endl;
 		//std::cout << Frost::Input::GetMouseX() << std::endl;
-		//if (Frost::Input::IsKeyPressed(Frost::FrostKeycode::SPACE))
-		//{
-		//	std::cout << "HAI!" << std::endl;
-		//}
+		//std::cout << timer.GetTime() << std::endl;
+
 	}
 
+private:
 };
+
+
+//Frost::Input* Frost::Input::s_Instance = new Frost::WindowsInput();
 
 Frost::Application* Frost::CreateApplication() {
 	return new Sandbox();

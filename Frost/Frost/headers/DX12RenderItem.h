@@ -84,6 +84,11 @@ namespace Frost
 	public:
 		RenderItem(int numFrameResources) : gNumFrameResources(numFrameResources) {};
 
+		int GetNumFramesDirty() { return NumFramesDirty; }
+		void DecrementNumFramesDirty() { NumFramesDirty--; }
+		XMMATRIX GetWorldMatrix() { return WorldMatrix; }
+		UINT GetObjCBIndex() { return ObjCBIndex; }
+
 	private:
 		// World matrix of the shape, describes the object's local space relative to the world space, which defines position, orientation and scale of the object in the world
 		XMMATRIX WorldMatrix = XMMatrixIdentity();

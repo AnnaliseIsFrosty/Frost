@@ -206,8 +206,18 @@ namespace Frost {
 		OnResize(mClientWidth, mClientHeight);
 	}
 
+	void DX12Renderer::Update(double time)
+	{
+		UpdateObjectCBs();
+
+	}
+
 	void DX12Renderer::Render(double time)
 	{
+		Update(time);
+
+
+
 		// Reuse the memory associated with command recording
 		// We can only reset when the associated command lists have finsihed execution on the GPU
 		mDirectCmdListAlloc->Reset();
@@ -227,10 +237,10 @@ namespace Frost {
 		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 		XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-		XMStoreFloat4x4(&mView, view);
+		mView = view;
 
-		XMMATRIX world = XMLoadFloat4x4(&mWorld);
-		XMMATRIX proj = XMLoadFloat4x4(&mProj);
+		XMMATRIX world = mWorld;
+		XMMATRIX proj = mProj;
 		XMMATRIX worldViewProj = world * view * proj;
 
 		// Update the constant buffer with the latest worldViewProj matrix.
@@ -390,7 +400,7 @@ namespace Frost {
 		mScissorRect = { 0, 0, mClientWidth, mClientHeight };
 
 		XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * XM_PI, width/height, 1.0f, 1000.0f);
-		XMStoreFloat4x4(&mProj, P);
+		mProj = P;
 
 		// std::cout << "--- RENDERER ---  : Finished Resizing Window" << std::endl;
 	}
@@ -884,6 +894,48 @@ namespace Frost {
 		}
 
 		// Update resources in mCurrFrameResource (like cbuffers)
+	}
+
+
+	void DX12Renderer::UpdateObjectCBs()
+	{
+		//auto currObjectCB = mCurrFrameResource->ObjectCB.get();
+		//for (auto& e : mAllRitems)
+		//{
+		//	// Only update the cbuffer data if the constants have changed
+		//	// Needs to be tracked per frame resource
+		//	if (e->GetNumFramesDirty() > 0)
+		//	{
+		//		XMMATRIX world = e->GetWorldMatrix();
+
+		//		ObjectConstants objConstants;
+		//		objConstants.World = world;
+
+		//		currObjectCB->CopyData(e->GetObjCBIndex(), objConstants);
+
+		//		// Next FrameResource needs to be updated too
+		//		e->DecrementNumFramesDirty();
+		//	}
+		//}
+	}
+
+	void DX12Renderer::UpdateMainPassCBs()
+	{
+		XMMATRIX view = mView;
+		XMMATRIX proj = mProj;
+
+		XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+		XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+		XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+		XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+
+		mMainPassCB.View = view;
+		mMainPassCB.InvView = invView;
+		mMainPassCB.Proj = proj;
+		mMainPassCB.InvProj = invProj;
+		mMainPassCB.ViewProj = viewProj;
+		mMainPassCB.InvViewProj = invViewProj;
+		mMainPassCB.EyePosW = mEyePos;
 	}
 }
 
