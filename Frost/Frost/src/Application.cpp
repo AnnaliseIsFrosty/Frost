@@ -9,7 +9,7 @@ namespace Frost {
 		m_Window->SetEventCallback([this](Event& e) {OnEvent(e); });
 		
 		//HWND wind = (HWND)m_Window->GetWindow();
-		m_Renderer = std::unique_ptr<Renderer>(Renderer::Create(m_Window->GetWindow()));
+		m_Renderer = std::unique_ptr<Renderer>(Renderer::Create(m_Window->GetWindow(), &m_Timer));
 
 	}
 
@@ -20,6 +20,7 @@ namespace Frost {
 	void Application::Run() {
 		while (m_Running)
 		{
+			m_Timer.CalculateDeltaTime();
 			//if (Input::IsKeyPressed(FrostKeycode::SPACE))
 			//{
 			//	std::cout << "FROSTY SPACE YAYA!" << std::endl;

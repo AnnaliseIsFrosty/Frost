@@ -19,7 +19,7 @@ namespace Frost
 	class DX12Renderer : public Renderer
 	{
 	public:
-		DX12Renderer(void* hwnd);
+		DX12Renderer(void* hwnd, Timer* timer);
 		void Init() override;
 		void Update(double time);
 		void Render(double time) override;
@@ -46,6 +46,7 @@ namespace Frost
 
 
 	private:
+		Timer* appTimer;
 		HWND mhMainWnd = nullptr;										// Main Window handle
 
 		Microsoft::WRL::ComPtr<IDXGIFactory4> mdxgiFactory;
@@ -108,8 +109,8 @@ namespace Frost
 		
 		void CreateFrameResources();
 		void FrameResourcesUpdate();
-		void UpdateObjectCBs();
-		void UpdateMainPassCBs();
+		void UpdateObjectCBs(double time);
+		void UpdateMainPassCBs(double time);
 
 		static const int gNumFrameResources = 3;
 		std::vector<std::unique_ptr<FrameResource>> mFrameResources;

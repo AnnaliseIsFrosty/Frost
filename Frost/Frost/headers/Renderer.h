@@ -1,4 +1,5 @@
 #pragma once
+#include "Timer.h"
 
 
 namespace Frost
@@ -8,7 +9,7 @@ namespace Frost
 	public:
 		virtual ~Renderer() {};
 
-		static Renderer* Create(void* windowHandle);
+		static Renderer* Create(void* windowHandle, Timer* timer);
 
 		virtual void Init() = 0;
 		virtual void Render(double time) = 0;

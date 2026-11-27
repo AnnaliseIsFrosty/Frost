@@ -40,7 +40,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(DirectX-Headers)
 
 
-add_library(Frost SHARED Frost/src/Application.cpp  Frost/src/WindowsWindow.cpp Frost/src/WindowsInput.cpp Frost/src/DX12Renderer.cpp Frost/src/Timer.cpp "Frost/src/DX12FrameResource.cpp")
+add_library(Frost SHARED Frost/src/Application.cpp  Frost/src/WindowsWindow.cpp Frost/src/WindowsInput.cpp Frost/src/DX12Renderer.cpp Frost/src/Timer.cpp "Frost/src/DX12FrameResource.cpp" "Frost/src/DX12GeometryGenerator.cpp")
 add_executable(Sandbox Sandbox/src/Sandbox.cpp)
 target_include_directories(Frost PUBLIC Frost/headers Frost/headers/Input.h)
 

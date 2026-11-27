@@ -4,13 +4,14 @@
 namespace Frost {
 	
 	
-	Renderer* Renderer::Create(void* hwnd)
+	Renderer* Renderer::Create(void* hwnd, Timer* timer)
 	{
-		return new DX12Renderer(hwnd);
+		return new DX12Renderer(hwnd, timer);
 	}
 
-	DX12Renderer::DX12Renderer(void* hwnd)
+	DX12Renderer::DX12Renderer(void* hwnd, Timer* timer)
 	{
+		appTimer = timer;
 		mhMainWnd = (HWND)hwnd;
 		Init();
 	}
@@ -208,7 +209,7 @@ namespace Frost {
 
 	void DX12Renderer::Update(double time)
 	{
-		UpdateObjectCBs();
+		//UpdateObjectCBs(time);
 
 	}
 
@@ -630,15 +631,21 @@ namespace Frost {
 
 	void DX12Renderer::CreateRootSignature()
 	{
-		CD3DX12_ROOT_PARAMETER slotRootParameter[1];
 
-		// Create a single descriptor table of CBVs.
-		CD3DX12_DESCRIPTOR_RANGE cbvTable;
-		cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-		slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+		// Create a descriptor table of CBVs.
+		CD3DX12_DESCRIPTOR_RANGE cbvTable0;
+		cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+		
+		CD3DX12_DESCRIPTOR_RANGE cbvTable1;
+		cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+		
+		CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+
+		slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
+		slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
 
 		// A root signature is an array of root parameters.
-		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
+		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 		// create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
@@ -898,29 +905,29 @@ namespace Frost {
 	}
 
 
-	void DX12Renderer::UpdateObjectCBs()
+	void DX12Renderer::UpdateObjectCBs(double time)
 	{
-		//auto currObjectCB = mCurrFrameResource->ObjectCB.get();
-		//for (auto& e : mAllRitems)
-		//{
-		//	// Only update the cbuffer data if the constants have changed
-		//	// Needs to be tracked per frame resource
-		//	if (e->GetNumFramesDirty() > 0)
-		//	{
-		//		XMMATRIX world = e->GetWorldMatrix();
+		auto currObjectCB = mCurrFrameResource->ObjectCB.get();
+		for (auto& e : mAllRitems)
+		{
+			// Only update the cbuffer data if the constants have changed
+			// Needs to be tracked per frame resource
+			if (e->GetNumFramesDirty() > 0)
+			{
+				XMMATRIX world = e->GetWorldMatrix();
 
-		//		ObjectConstants objConstants;
-		//		objConstants.World = world;
+				ObjectConstants objConstants;
+				objConstants.World = world;
 
-		//		currObjectCB->CopyData(e->GetObjCBIndex(), objConstants);
+				currObjectCB->CopyData(e->GetObjCBIndex(), objConstants);
 
-		//		// Next FrameResource needs to be updated too
-		//		e->DecrementNumFramesDirty();
-		//	}
-		//}
+				// Next FrameResource needs to be updated too
+				e->DecrementNumFramesDirty();
+			}
+		}
 	}
 
-	void DX12Renderer::UpdateMainPassCBs()
+	void DX12Renderer::UpdateMainPassCBs(double time)
 	{
 		XMMATRIX view = mView;
 		XMMATRIX proj = mProj;
@@ -937,6 +944,15 @@ namespace Frost {
 		mMainPassCB.ViewProj = viewProj;
 		mMainPassCB.InvViewProj = invViewProj;
 		mMainPassCB.EyePosW = mEyePos;
+		mMainPassCB.RenderTargetSize = XMFLOAT2((float)mClientWidth, (float)mClientHeight);
+		mMainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / mClientWidth, 1.0f / mClientHeight);
+		mMainPassCB.NearZ = 1.f;
+		mMainPassCB.FarZ = 1000.f;
+		mMainPassCB.TotalTime = time;
+		mMainPassCB.DeltaTime = appTimer->GetDeltaTime();
+
+		auto currPassCB = mCurrFrameResource->PassCB.get();
+		currPassCB->CopyData(0, mMainPassCB);
 	}
 }
 
